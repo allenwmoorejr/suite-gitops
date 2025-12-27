@@ -17,24 +17,22 @@ spec:
 
   chart:
     spec:
-      chart: suite-command-center
+      # This is the path INSIDE the GitRepository artifact
+      chart: ./apps/suite/command-center/chart
       sourceRef:
-        kind: HelmChart
-        name: suite-command-center
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
       interval: 10m
 
   values:
-    # Adjust to match your chart's values schema
     image:
       repository: registry.suite.home.arpa:5000/suite-command-center-api
       tag: latest
     uiImage:
       repository: registry.suite.home.arpa:5000/suite-command-center-ui
       tag: latest
-
     service:
       port: 80
-
     ingress:
       enabled: false
