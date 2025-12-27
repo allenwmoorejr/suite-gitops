@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: suite-command-center
+  namespace: flux-system
+spec:
+  interval: 10m
+  chart: ./apps/suite/command-center/chart
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  reconcileStrategy: ChartVersion

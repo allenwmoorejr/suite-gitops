@@ -6,6 +6,7 @@ metadata:
 spec:
   interval: 10m
   timeout: 10m
+
   install:
     createNamespace: true
     remediation:
@@ -16,38 +17,24 @@ spec:
 
   chart:
     spec:
-      # OPTION A (HelmRepository + chart name):
       chart: suite-command-center
-      version: ">=0.1.0 <1.0.0"
       sourceRef:
-        kind: HelmRepository
+        kind: HelmChart
         name: suite-command-center
         namespace: flux-system
       interval: 10m
 
-      # OPTION B (OCI chart):
-      # chart: oci://ghcr.io/allenwmoorejr/charts/suite-command-center
-      # version: "0.1.0"
-
   values:
-    # ---- common knobs ----
+    # Adjust to match your chart's values schema
     image:
       repository: registry.suite.home.arpa:5000/suite-command-center-api
-      tag: "latest"
+      tag: latest
     uiImage:
       repository: registry.suite.home.arpa:5000/suite-command-center-ui
-      tag: "latest"
+      tag: latest
 
     service:
       port: 80
 
-    # if your chart supports it, prefer native ingress disabled
     ingress:
       enabled: false
-
-    # any env/config you already use
-    env:
-      # EXAMPLE:
-      # API_BASE_PATH: "/api"
-      # LOG_LEVEL: "info"
-      {}
