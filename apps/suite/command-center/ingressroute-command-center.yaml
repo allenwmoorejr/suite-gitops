@@ -1,0 +1,32 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: suite-command-center
+  namespace: suite
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    # 1) API via /api (strip /api prefix)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-api
+      services:
+        - name: suite-command-center-api
+          port: 80
+
+    # 2) ALSO expose API directly at /v1, /healthz, /openapi.json (no strip)
+    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/v1`) || Path(`/healthz`) || Path(`/openapi.json`))
+      kind: Rule
+      services:
+        - name: suite-command-center-api
+          port: 80
+
+    # 3) UI fallback
+    - match: Host(`command-center.suite.home.arpa`)
+      kind: Rule
+      services:
+        - name: suite-command-center-ui
+          port: 80
