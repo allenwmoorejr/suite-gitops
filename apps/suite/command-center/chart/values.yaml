@@ -1,12 +1,15 @@
-image:
-  repository: registry.suite.home.arpa:5000/suite-command-center-api
-  tag: latest
-uiImage:
-  repository: registry.suite.home.arpa:5000/suite-command-center-ui
-  tag: latest
+api:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-api
+    tag: latest
+  port: 8000
 
-service:
+ui:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-ui
+    tag: latest
   port: 80
 
-ingress:
-  enabled: false
+service:
+  apiPort: 80
+  uiPort: 80
