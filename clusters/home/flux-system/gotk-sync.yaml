@@ -11,3 +11,16 @@ spec:
   url: ssh://git@github.com/allenwmoorejr/suite-gitops.git
   secretRef:
     name: flux-system-git-auth
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
