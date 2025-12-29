@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: suite-command-center
+  namespace: suite
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # Adjust these to match your existing setup
+      chart: suite-command-center
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1m
+  values:
+    # IMPORTANT: do not let Helm create the SA. Flux/Kustomize owns it.
+    serviceAccount:
+      create: false
+      name: suite-command-center-api
+
+    # If your chart has per-component SA config, keep this too:
+    api:
+      serviceAccount:
+        create: false
+        name: suite-command-center-api
+
+    # If your chart exposes these knobs, set them.
+    deployment:
+      serviceAccountName: suite-command-center-api
+      automountServiceAccountToken: true
