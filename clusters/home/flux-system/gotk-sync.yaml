@@ -9,3 +9,5 @@ spec:
   ref:
     branch: main
   url: ssh://git@github.com/allenwmoorejr/suite-gitops.git
+  secretRef:
+    name: flux-system-git-auth
