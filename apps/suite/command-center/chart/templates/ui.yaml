@@ -34,4 +34,4 @@ spec:
   ports:
     - name: http
       port: {{ .Values.service.uiPort }}
-      targetPort: {{ .Values.ui.port }}
+    targetPort: {{ .Values.ui.service.targetPort | default 3000 }}

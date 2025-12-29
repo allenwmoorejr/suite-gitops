@@ -19,3 +19,7 @@ ingress:
 serviceAccount:
   create: true
   name: suite-command-center-api
+
+ui:
+  service:
+    targetPort: 3000
