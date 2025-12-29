@@ -1,13 +1,15 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 1m0s
+  timeout: 2m0s
+  url: ssh://git@github.com/allenwmoorejr/suite-gitops.git
   ref:
     branch: main
-  url: ssh://git@github.com/allenwmoorejr/suite-gitops.git
   secretRef:
     name: flux-system-git-auth
 ---
@@ -17,7 +19,8 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 10m0s
+  timeout: 5m0s
   path: ./clusters/home
   prune: true
   sourceRef:
