@@ -1,27 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: suite-command-center-ui
-  labels:
-    app: suite-command-center-ui
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: suite-command-center-ui
-  template:
-    metadata:
-      labels:
-        app: suite-command-center-ui
-    spec:
-      containers:
-        - name: ui
-          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
-          imagePullPolicy: IfNotPresent
-          ports:
-            - name: http
-              containerPort: {{ .Values.ui.port }}
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -33,5 +9,5 @@ spec:
     app: suite-command-center-ui
   ports:
     - name: http
-      port: {{ .Values.service.uiPort }}
-    targetPort: {{ .Values.ui.service.targetPort | default 3000 }}
+      port: 80
+      targetPort: {{ .Values.ui.service.targetPort | default 3000 }}

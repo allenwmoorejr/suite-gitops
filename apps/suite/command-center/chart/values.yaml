@@ -23,3 +23,6 @@ serviceAccount:
 ui:
   service:
     targetPort: 3000
+ui:
+  service:
+    targetPort: 3000
