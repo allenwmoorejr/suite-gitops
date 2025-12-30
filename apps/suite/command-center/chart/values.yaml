@@ -26,3 +26,16 @@ ui:
 ui:
   service:
     targetPort: 3000
+
+# ---- local-render defaults (safe; HelmRelease can override) ----
+api:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-api
+    tag: latest
+
+ui:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-ui
+    tag: latest
+  service:
+    targetPort: 3000
