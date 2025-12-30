@@ -9,7 +9,7 @@ spec:
       app: suite-command-center-api-shim
   policyTypes: ["Egress"]
   egress:
-    # DNS to CoreDNS (k3s typically labels it k8s-app=kube-dns)
+    # DNS -> CoreDNS
     - to:
         - namespaceSelector:
             matchLabels:
@@ -21,7 +21,7 @@ spec:
         - { protocol: UDP, port: 53 }
         - { protocol: TCP, port: 53 }
 
-    # Kubernetes API via the in-cluster 'kubernetes' service IP
+    # kube-apiserver via in-cluster Service IP
     - to:
         - ipBlock:
             cidr: 10.43.0.1/32
