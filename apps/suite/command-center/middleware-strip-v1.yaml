@@ -1,0 +1,9 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: command-center-strip-v1
+  namespace: suite
+spec:
+  stripPrefix:
+    prefixes:
+      - /v1
