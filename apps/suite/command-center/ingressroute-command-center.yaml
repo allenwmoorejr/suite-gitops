@@ -12,7 +12,7 @@ spec:
       middlewares:
         - name: strip-api
       services:
-        - name: suite-command-center-api
+        - name: suite-command-center-api-shim
           port: 80
 
     - match: Host(`command-center.suite.home.arpa`)

@@ -21,8 +21,6 @@ spec:
           env:
             - name: PORT
               value: "8000"
-            - name: APP_NAME
-              value: "suite-command-center-api-shim"
           ports:
             - name: http
               containerPort: 8000

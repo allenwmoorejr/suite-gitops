@@ -4,3 +4,7 @@ resources:
   - helmrelease.yaml
   - ingressroute-command-center.yaml
   - middleware-strip-api.yaml
+  - api-shim-configmap.yaml
+  - api-shim-rbac.yaml
+  - api-shim-deploy.yaml
+  - api-shim-service.yaml
