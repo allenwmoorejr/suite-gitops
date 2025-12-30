@@ -1,54 +1,47 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: command-center-api
-  namespace: suite
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    # /api/* -> shim (strip /api so shim sees /healthz, /nodes, /pods, etc)
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
-      kind: Rule
-      priority: 1000
-      middlewares:
-        - name: strip-api
-      services:
-        - name: suite-command-center-api-shim
-          port: 80
-
-    # keep your working v1/cluster routes -> shim
-    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/v1/cluster`) || PathPrefix(`/v1`) || PathPrefix(`/cluster`))
-      kind: Rule
-      priority: 900
-      middlewares:
-        - name: command-center-strip-v1
-      services:
-        - name: suite-command-center-api-shim
-          port: 80
-
-    # telemetry endpoints (the UI is clearly trying these)
-    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/stream`) || PathPrefix(`/sensors`))
-      kind: Rule
-      priority: 850
-      services:
-        - name: suite-command-center-api-shim
-          port: 80
-  tls: {}
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
   name: command-center
   namespace: suite
 spec:
   entryPoints:
     - websecure
   routes:
-    # UI catch-all (lowest priority so API routes win)
+    # /api/* -> shim (strip /api)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      kind: Rule
+      middlewares:
+        - name: command-center-strip-api
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # /v1/* -> shim (strip /v1 so /v1/cluster/nodes becomes /cluster/nodes)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
+      kind: Rule
+      middlewares:
+        - name: command-center-strip-v1
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # /cluster/* -> shim
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
+      kind: Rule
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # Root “API-ish” endpoints the UI is calling directly
+    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/nodes`) || PathPrefix(`/pods`) || PathPrefix(`/workloads`) || PathPrefix(`/events`) || PathPrefix(`/summary`) || PathPrefix(`/stream`) || PathPrefix(`/sensors`) || PathPrefix(`/healthz`))
+      kind: Rule
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # Everything else -> UI
     - match: Host(`command-center.suite.home.arpa`)
       kind: Rule
-      priority: 1
       services:
         - name: suite-command-center-ui
           port: 80
