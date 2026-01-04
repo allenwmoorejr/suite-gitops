@@ -13,3 +13,5 @@ resources:
   - api-shim-service.yaml
   - netpol-allow-traefik-to-api-shim.yaml
   - netpol-allow-api-shim-egress-k8s.yaml
+
+- ingressroute-command-center-api-sse.yaml
