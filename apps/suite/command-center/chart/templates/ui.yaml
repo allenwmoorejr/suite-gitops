@@ -10,4 +10,4 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: {{ .Values.ui.service.targetPort | default 3000 }}
+      targetPort: 3000
