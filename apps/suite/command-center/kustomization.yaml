@@ -5,6 +5,7 @@ resources:
   - helmrelease.yaml
   - ingressroute-command-center.yaml
   - ingressroute-command-center-api.yaml
+  - ingressroute-command-center-api-sse.yaml
   - middleware-strip-api.yaml
   - middleware-strip-v1.yaml
   - api-shim-configmap.yaml
@@ -12,5 +13,3 @@ resources:
   - api-shim-deploy.yaml
   - api-shim-service.yaml
   - netpol-allow-api-shim-egress-k8s.yaml
-
-- ingressroute-command-center-api-sse.yaml
