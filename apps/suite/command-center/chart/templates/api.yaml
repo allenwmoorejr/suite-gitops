@@ -3,10 +3,46 @@ kind: Service
 metadata:
   name: suite-command-center-api
   namespace: suite
+  labels:
+    app: suite-command-center-api
 spec:
+  type: ClusterIP
   selector:
-    app: suite-command-center-api-shim
+    app: suite-command-center-api
   ports:
     - name: http
       port: 80
       targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suite-command-center-api
+  namespace: suite
+  labels:
+    app: suite-command-center-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suite-command-center-api
+  template:
+    metadata:
+      labels:
+        app: suite-command-center-api
+    spec:
+      containers:
+        - name: api
+          image: registry.suite.home.arpa:5000/suite-command-center-api:latest
+          env:
+            - name: PORT
+              value: "8000"
+          ports:
+            - name: http
+              containerPort: 8000
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            failureThreshold: 60
+            periodSeconds: 2
