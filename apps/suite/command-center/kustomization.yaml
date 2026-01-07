@@ -2,38 +2,33 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - helmrelease.yaml
+  - chart
   - ingressroute-command-center.yaml
   - ingressroute-command-center-api.yaml
   - ingressroute-command-center-api-sse.yaml
-  - api-shim-deploy.yaml
-  - api-shim-service.yaml
 
-  # existing netpols
-  - netpol-allow-all-to-suite-command-center-ui-80.yaml
-  - netpol-allow-suite-to-suite-command-center-ui.yaml
-  - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
-
-  # NEW: netpols for 3000
+  # UI netpols (3000)
   - netpol-allow-all-to-suite-command-center-ui-3000.yaml
   - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
 
-patchesStrategicMerge:
-  # existing patches (keep if you already had them; harmless if no-op)
-  - patches/patch-ui-service-targetport-80.yaml
-  - patches/patch-ui-deploy-containerport-80.yaml
+  # API hardening (optional, keep if you created them)
+  - api-clusterrole.yaml
+  - api-clusterrolebinding.yaml
+  - api-serviceaccount.yaml
+  - netpol-allow-api-to-kube-apiserver.yaml
 
-  # NEW: 3000 alignment
-  - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
-  - patches/patch-ui-service-targetport-3000.yaml
-  - patches/patch-ui-deploy-containerport-3000.yaml
-  - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
-  - netpol-allow-suite-to-suite-command-center-api-8000.yaml
-
-
-resources:
+  # SSE middleware (if you created these)
   - mw-command-center-sse.yaml
   - mw-command-center-http11.yaml
 
 patchesStrategicMerge:
+  # UI alignment
+  - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
+  - patches/patch-ui-service-targetport-3000.yaml
+  - patches/patch-ui-deploy-containerport-3000.yaml
+
+  # API service alignment
+  - patches/patch-api-service-targetport-8000.yaml
+
+  # SSE route patch (if you created it)
   - patch-ingressroute-sse.yaml
