@@ -9,6 +9,8 @@ spec:
   routes:
     - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
       kind: Rule
+      middlewares:
+        - name: command-center-strip-v1
       services:
         - name: suite-command-center-api
           port: 80
