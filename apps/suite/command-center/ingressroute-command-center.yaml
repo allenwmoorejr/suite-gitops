@@ -7,40 +7,29 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # API routes (direct -> suite-command-center-api)
+    # ---- API (ALL paths) ----
     - kind: Rule
-      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      match: Host(`command-center.suite.home.arpa`) &&
+             ( PathPrefix(`/v1`)
+             || PathPrefix(`/cluster`)
+             || PathPrefix(`/nodes`)
+             || PathPrefix(`/pods`)
+             || PathPrefix(`/events`)
+             || PathPrefix(`/summary`)
+             || PathPrefix(`/stream`)
+             || PathPrefix(`/sensors`)
+             || PathPrefix(`/healthz`) )
       middlewares:
-        - name: command-center-strip-api
+        - name: command-center-http11
+        - name: command-center-sse
       services:
         - name: suite-command-center-api
           port: 80
 
-    - kind: Rule
-      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
-      middlewares:
-        - name: command-center-strip-v1
-      services:
-        - name: suite-command-center-api
-          port: 80
-
-    - kind: Rule
-      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
-      services:
-        - name: suite-command-center-api
-          port: 80
-
-    - kind: Rule
-      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/nodes`) || PathPrefix(`/pods`) || PathPrefix(`/workloads`) || PathPrefix(`/events`) || PathPrefix(`/summary`) || PathPrefix(`/stream`) || PathPrefix(`/sensors`) || PathPrefix(`/healthz`))
-      services:
-        - name: suite-command-center-api
-          port: 80
-
-    # UI (still -> suite-command-center-ui)
+    # ---- UI ----
     - kind: Rule
       match: Host(`command-center.suite.home.arpa`)
       services:
         - name: suite-command-center-ui
           port: 80
-
   tls: {}

@@ -6,6 +6,4 @@ metadata:
 spec:
   headers:
     customRequestHeaders:
-      Connection: "keep-alive"
-      Cache-Control: "no-cache"
-      X-Accel-Buffering: "no"
+      Connection: keep-alive
