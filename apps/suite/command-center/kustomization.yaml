@@ -6,8 +6,6 @@ resources:
   - mw-command-center-http11.yaml
   - mw-command-center-sse.yaml
 
-patchesStrategicMerge:
-  - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
-  - patches/patch-ui-service-targetport-3000.yaml
-  - patches/patch-ui-deploy-containerport-3000.yaml
-  - patches/patch-api-service-targetport-8000.yaml
+# IMPORTANT:
+# Helm owns Deployments & Services.
+# Kustomize must NOT patch them.
