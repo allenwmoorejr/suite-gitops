@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-to-suite-command-center-ui-80
+  namespace: suite
+spec:
+  podSelector:
+    matchLabels:
+      app: suite-command-center-ui
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}   # all namespaces
+          podSelector: {}         # all pods
+      ports:
+        - protocol: TCP
+          port: 80
