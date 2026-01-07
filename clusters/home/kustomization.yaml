@@ -3,3 +3,7 @@ kind: Kustomization
 resources:
   - ./flux-system
   - ../../apps/suite/command-center
+
+resources:
+  - ./flux-system
+  - ./apps.yaml
