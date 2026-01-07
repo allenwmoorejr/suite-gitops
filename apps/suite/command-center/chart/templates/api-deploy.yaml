@@ -38,13 +38,3 @@ spec:
 ---
 apiVersion: v1
 kind: Service
-metadata:
-  name: suite-command-center-api
-  namespace: {{ .Release.Namespace }}
-spec:
-  selector:
-    app: suite-command-center-api
-  ports:
-    - name: http
-      port: {{ .Values.service.port | default 80 }}
-      targetPort: 8000
