@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: suite-command-center-ui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: suite-command-center-ui
 spec:
   replicas: 1
   selector:
@@ -12,9 +15,12 @@ spec:
       labels:
         app: suite-command-center-ui
     spec:
+      nodeSelector:
+        suite.home.arpa/display: "true"
       containers:
         - name: ui
-          image: "{{ .Values.uiImage.repository }}:{{ .Values.uiImage.tag }}"
+          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: {{ .Values.ui.port | default 80 }}

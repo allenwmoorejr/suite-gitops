@@ -1,0 +1,70 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  validate-kustomize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools (kustomize + kubeconform)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # kustomize
+          KUSTOMIZE_VER="5.4.3"
+          curl -fsSL -o kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VER}/kustomize_v${KUSTOMIZE_VER}_linux_amd64.tar.gz"
+          tar -xzf kustomize.tgz
+          sudo mv kustomize /usr/local/bin/kustomize
+
+          # kubeconform
+          KUBECONFORM_VER="0.6.6"
+          curl -fsSL -o kubeconform.tgz "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VER}/kubeconform-linux-amd64.tar.gz"
+          tar -xzf kubeconform.tgz
+          sudo mv kubeconform /usr/local/bin/kubeconform
+
+      - name: Render (Flux entrypoint: clusters/home)
+        shell: bash
+        run: |
+          set -euo pipefail
+          kustomize build ./clusters/home > /tmp/rendered-home.yaml
+          test -s /tmp/rendered-home.yaml
+          echo "Rendered size:"
+          wc -l /tmp/rendered-home.yaml
+
+      - name: Validate manifests (kubeconform)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Strict catches schema mistakes early; ignore missing CRDs so Traefik/Flux CRDs don't fail CI.
+          kubeconform \
+            -strict \
+            -ignore-missing-schemas \
+            -summary \
+            /tmp/rendered-home.yaml
+
+  sanity-diff:
+    # Optional: prevents accidental deletions of huge parts of the cluster (prune mistakes)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guardrails (no “oops, deleted the world”)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Add simple repo-specific checks here. Examples:
+          # - prevent deletion of clusters/home/kustomization.yaml
+          # - require app kustomizations still referenced
+          test -f ./clusters/home/kustomization.yaml
+          echo "Guardrails OK"
+
