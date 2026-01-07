@@ -7,10 +7,39 @@ spec:
   entryPoints:
     - websecure
   routes:
+    # /api/* -> shim (strip /api)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      kind: Rule
+      priority: 10000
+      middlewares:
+        - name: command-center-strip-api
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # /v1/* -> shim (strip /v1)
     - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
       kind: Rule
+      priority: 9990
       middlewares:
         - name: command-center-strip-v1
       services:
-        - name: suite-command-center-api
+        - name: suite-command-center-api-shim
           port: 80
+
+    # /cluster/* -> shim
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
+      kind: Rule
+      priority: 9980
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+
+    # OPTIONAL: if the UI is calling these directly, route them too
+    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/stream`) || PathPrefix(`/sensors`))
+      kind: Rule
+      priority: 9970
+      services:
+        - name: suite-command-center-api-shim
+          port: 80
+  tls: {}
