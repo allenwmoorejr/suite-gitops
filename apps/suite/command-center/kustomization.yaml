@@ -30,3 +30,10 @@ patchesStrategicMerge:
   - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
   - netpol-allow-suite-to-suite-command-center-api-8000.yaml
 
+
+resources:
+  - mw-command-center-sse.yaml
+  - mw-command-center-http11.yaml
+
+patchesStrategicMerge:
+  - patch-ingressroute-sse.yaml

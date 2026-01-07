@@ -1,0 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: command-center-sse
+  namespace: suite
+spec:
+  buffering:
+    maxRequestBodyBytes: 0
+    maxResponseBodyBytes: 0
+    memRequestBodyBytes: 0
+    memResponseBodyBytes: 0
+    retryExpression: "false"

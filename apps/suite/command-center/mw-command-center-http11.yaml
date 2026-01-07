@@ -1,0 +1,11 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: command-center-http11
+  namespace: suite
+spec:
+  headers:
+    customRequestHeaders:
+      Connection: "keep-alive"
+      Cache-Control: "no-cache"
+      X-Accel-Buffering: "no"
