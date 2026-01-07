@@ -7,42 +7,23 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # /api/* -> shim (strip /api)
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+    # SSE first (most specific)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1/events/stream`)
       kind: Rule
-      middlewares:
-        - name: command-center-strip-api
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
 
-    # /v1/* -> shim (strip /v1 so /v1/cluster/nodes becomes /cluster/nodes)
+    # API next
     - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
       kind: Rule
-      middlewares:
-        - name: command-center-strip-v1
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
 
-    # /cluster/* -> shim
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
-      kind: Rule
-      services:
-        - name: suite-command-center-api-shim
-          port: 80
-
-    # Root “API-ish” endpoints the UI is calling directly
-    - match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/nodes`) || PathPrefix(`/pods`) || PathPrefix(`/workloads`) || PathPrefix(`/events`) || PathPrefix(`/summary`) || PathPrefix(`/stream`) || PathPrefix(`/sensors`) || PathPrefix(`/healthz`))
-      kind: Rule
-      services:
-        - name: suite-command-center-api-shim
-          port: 80
-
-    # Everything else -> UI
-    - match: Host(`command-center.suite.home.arpa`)
+    # UI last (catch-all)
+    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/`)
       kind: Rule
       services:
         - name: suite-command-center-ui
           port: 80
-  tls: {}
