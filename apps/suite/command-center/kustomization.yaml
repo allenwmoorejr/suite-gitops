@@ -27,3 +27,6 @@ patchesStrategicMerge:
   - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
   - patches/patch-ui-service-targetport-3000.yaml
   - patches/patch-ui-deploy-containerport-3000.yaml
+  - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
+  - netpol-allow-suite-to-suite-command-center-api-8000.yaml
+
