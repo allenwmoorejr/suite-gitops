@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suite-command-center-ui
+  namespace: suite
+spec:
+  template:
+    spec:
+      containers:
+        - name: ui
+          env:
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"

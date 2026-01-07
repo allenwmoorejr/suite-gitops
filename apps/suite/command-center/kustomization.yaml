@@ -16,3 +16,12 @@ resources:
   - api-shim-deploy.yaml
   - api-shim-service.yaml
   - netpol-allow-api-shim-egress-k8s.yaml
+
+patchesStrategicMerge:
+  - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
+  - patches/patch-ui-service-targetport-3000.yaml
+  - patches/patch-ui-deploy-containerport-3000.yaml
+
+resources:
+  - netpol-allow-all-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
