@@ -7,23 +7,40 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # SSE first (most specific)
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1/events/stream`)
-      kind: Rule
+    # API routes (direct -> suite-command-center-api)
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      middlewares:
+        - name: command-center-strip-api
       services:
         - name: suite-command-center-api
           port: 80
 
-    # API next
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
-      kind: Rule
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
+      middlewares:
+        - name: command-center-strip-v1
       services:
         - name: suite-command-center-api
           port: 80
 
-    # UI last (catch-all)
-    - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/`)
-      kind: Rule
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
+      services:
+        - name: suite-command-center-api
+          port: 80
+
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/nodes`) || PathPrefix(`/pods`) || PathPrefix(`/workloads`) || PathPrefix(`/events`) || PathPrefix(`/summary`) || PathPrefix(`/stream`) || PathPrefix(`/sensors`) || PathPrefix(`/healthz`))
+      services:
+        - name: suite-command-center-api
+          port: 80
+
+    # UI (still -> suite-command-center-ui)
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`)
       services:
         - name: suite-command-center-ui
           port: 80
+
+  tls: {}
