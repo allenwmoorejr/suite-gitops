@@ -17,8 +17,13 @@ spec:
     spec:
       containers:
         - name: ui
-          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+          image: "{{ .Values.ui.repository }}:{{ .Values.ui.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: {{ .Values.ui.service.targetPort | default 3000 }}
+              containerPort: 3000
+          env:
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"

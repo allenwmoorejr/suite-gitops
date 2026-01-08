@@ -25,3 +25,7 @@ fullnameOverride: ""
 serviceAccount:
   create: true
   name: ""
+
+ui:
+  repository: registry.suite.home.arpa:5000/suite-command-center-ui
+  tag: latest
