@@ -6,7 +6,7 @@ metadata:
   labels:
     app: suite-command-center-api
 spec:
-  replicas: {{ .Values.replicas.api | default 1 }}
+  replicas: 1
   selector:
     matchLabels:
       app: suite-command-center-api
@@ -15,26 +15,11 @@ spec:
       labels:
         app: suite-command-center-api
     spec:
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ .Values.serviceAccount.name | default "suite-command-center-api" }}
-      {{- end }}
-      automountServiceAccountToken: true
+      serviceAccountName: suite-command-center-api
       containers:
         - name: api
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
-          env:
-            - name: PORT
-              value: "8000"
-          startupProbe:
-            httpGet:
-              path: /healthz
-              port: 8000
-            periodSeconds: 2
-            timeoutSeconds: 2
-            failureThreshold: 60
----
-apiVersion: v1
-kind: Service
+            - name: http
+              containerPort: {{ .Values.api.service.targetPort | default 8000 }}

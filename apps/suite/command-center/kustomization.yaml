@@ -1,51 +1,24 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: suite
-
 resources:
   - helmrelease.yaml
 
-  # ingress
+  # Ingress + middleware
   - ingressroute-command-center.yaml
   - ingressroute-command-center-api.yaml
   - ingressroute-command-center-api-sse.yaml
-
-  # middlewares
-  - mw-command-center-http11.yaml
-  - mw-command-center-sse.yaml
   - middleware-strip-api.yaml
   - middleware-strip-v1.yaml
+  - mw-command-center-http11.yaml
+  - mw-command-center-sse.yaml
 
-  # netpols
+  # Netpols
   - netpol-allow-all-to-suite-command-center-ui-80.yaml
   - netpol-allow-all-to-suite-command-center-ui-3000.yaml
-  - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
-  - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-suite-to-suite-command-center-api-8000.yaml
   - netpol-allow-suite-to-suite-command-center-ui.yaml
   - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
-  - netpol-allow-suite-to-suite-command-center-api-8000.yaml
+  - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
   - netpol-allow-api-to-kube-apiserver.yaml
-  - netpol-allow-api-shim-egress-k8s.yaml
-
-  # rbac
-  - api-serviceaccount.yaml
-  - api-clusterrole.yaml
-  - api-clusterrolebinding.yaml
-
-# Post-render patches (these patch the Helm-rendered objects)
-patchesJson6902:
-  - target:
-      version: v1
-      kind: Service
-      name: suite-command-center-ui
-      namespace: suite
-    path: patches/patch-ui-service-targetport.json
-
-  - target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: suite-command-center-ui
-      namespace: suite
-    path: patches/patch-ui-deploy-containerport.json

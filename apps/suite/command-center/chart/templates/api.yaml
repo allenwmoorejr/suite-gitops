@@ -1,31 +1,14 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
   name: suite-command-center-api
-  namespace: suite
+  namespace: {{ .Release.Namespace }}
   labels:
     app: suite-command-center-api
 spec:
-  replicas: 1
   selector:
-    matchLabels:
-      app: suite-command-center-api
-  template:
-    metadata:
-      labels:
-        app: suite-command-center-api
-    spec:
-      containers:
-        - name: api
-          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
-          ports:
-            - containerPort: 8000
-          env:
-            - name: PORT
-              value: "8000"
-          startupProbe:
-            httpGet:
-              path: /healthz
-              port: 8000
-            failureThreshold: 60
-            periodSeconds: 2
+    app: suite-command-center-api
+  ports:
+    - name: http
+      port: {{ .Values.api.service.port | default 80 }}
+      targetPort: {{ .Values.api.service.targetPort | default 8000 }}

@@ -6,11 +6,9 @@ metadata:
   labels:
     app: suite-command-center-ui
 spec:
-  type: ClusterIP
   selector:
     app: suite-command-center-ui
   ports:
     - name: http
-      port: {{ .Values.service.uiPort | default 80 }}
-      targetPort: {{ .Values.ui.port | default 80 }}
-      protocol: TCP
+      port: {{ .Values.ui.service.port | default 80 }}
+      targetPort: {{ .Values.ui.service.targetPort | default 3000 }}

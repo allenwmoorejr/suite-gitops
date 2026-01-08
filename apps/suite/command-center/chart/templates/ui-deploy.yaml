@@ -15,12 +15,10 @@ spec:
       labels:
         app: suite-command-center-ui
     spec:
-      nodeSelector:
-        suite.home.arpa/display: "true"
       containers:
         - name: ui
           image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: {{ .Values.ui.port | default 80 }}
+              containerPort: {{ .Values.ui.service.targetPort | default 3000 }}

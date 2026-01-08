@@ -1,41 +1,20 @@
-replicas:
-  api: 1
-  ui: 1
-
-image:
-  repository: registry.suite.home.arpa:5000/suite-command-center-api
-  tag: latest
-
-uiImage:
-  repository: registry.suite.home.arpa:5000/suite-command-center-ui
-  tag: latest
-
-service:
-  port: 80
-
-ingress:
-  enabled: false
-
-serviceAccount:
-  create: true
-  name: suite-command-center-api
-
-ui:
-  service:
-    targetPort: 3000
-ui:
-  service:
-    targetPort: 3000
-
-# ---- local-render defaults (safe; HelmRelease can override) ----
 api:
   image:
     repository: registry.suite.home.arpa:5000/suite-command-center-api
     tag: latest
+  service:
+    port: 80
+    targetPort: 8000
 
 ui:
   image:
     repository: registry.suite.home.arpa:5000/suite-command-center-ui
     tag: latest
   service:
+    port: 80
     targetPort: 3000
+
+# --- required defaults (prevents nil pointer in templates/serviceaccount.yaml)
+serviceAccount:
+  create: true
+  name: ""
