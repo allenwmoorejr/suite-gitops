@@ -7,10 +7,8 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # ---- API (ONLY real API paths) ----
     - kind: Rule
-      match: Host(`command-center.suite.home.arpa`) &&
-             ( PathPrefix(`/v1`) || PathPrefix(`/stream`) )
+      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/v1`) || PathPrefix(`/stream`))
       middlewares:
         - name: command-center-http11
         - name: command-center-sse
@@ -18,7 +16,6 @@ spec:
         - name: suite-command-center-api
           port: 80
 
-    # ---- UI (everything else, including /nodes) ----
     - kind: Rule
       match: Host(`command-center.suite.home.arpa`)
       services:
