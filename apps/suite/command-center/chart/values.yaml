@@ -18,3 +18,10 @@ ui:
 serviceAccount:
   create: true
   name: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
