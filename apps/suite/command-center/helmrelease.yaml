@@ -4,18 +4,7 @@ metadata:
   name: suite-command-center
   namespace: suite
 spec:
-  interval: 10m
-  timeout: 10m
-
-  install:
-    createNamespace: true
-    remediation:
-      retries: 3
-
-  upgrade:
-    remediation:
-      retries: 3
-
+  interval: 5m
   chart:
     spec:
       chart: ./apps/suite/command-center/chart
@@ -23,23 +12,13 @@ spec:
         kind: GitRepository
         name: flux-system
         namespace: flux-system
-      interval: 10m
-      reconcileStrategy: ChartVersion
-      version: "*"
-
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
   values:
-    api:
-      image:
-        repository: registry.suite.home.arpa:5000/suite-command-center-api
-        tag: latest
-      port: 8000
-
     ui:
-      image:
-        repository: registry.suite.home.arpa:5000/suite-command-center-ui
-        tag: latest
-      port: 80
-
-    service:
-      apiPort: 80
-      uiPort: 80
+      repository: registry.suite.home.arpa:5000/suite-command-center-ui
+      tag: latest
