@@ -18,15 +18,20 @@ resources:
   - netpol-allow-suite-to-suite-command-center-api-8000.yaml
   - netpol-allow-api-shim-egress-k8s.yaml
   - netpol-allow-api-to-kube-apiserver.yaml
-patches:
-  - path: patches/patch-ui-deploy-containerport-80.yaml
-  - path: patches/patch-ui-deploy-containerport-3000.yaml
-  - path: patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
-  - path: patches/patch-ui-service-targetport-80.yaml
-  - path: patches/patch-ui-service-targetport-3000.yaml
-  - path: patches/patch-api-serviceaccount.yaml
-  - path: patches/patch-api-service-port-80.yaml
-  - path: patches/patch-api-service-targetport-8000.yaml
-  - path: patches/patch-api-service-selector.yaml
-  - path: patch-ingressroute-ui.yaml
-  - path: patch-ingressroute-sse.yaml
+patchesJson6902:
+
+patchesJson6902:
+  - target:
+      version: v1
+      kind: Service
+      name: suite-command-center-ui
+      namespace: suite
+    path: patches/patch-ui-service-targetport.json
+
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: suite-command-center-ui
+      namespace: suite
+    path: patches/patch-ui-deploy-containerport.json
