@@ -1,9 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: suite
-
 resources:
-  # Core app manifests (non-Helm)
   - helmrelease.yaml
   - ingressroute-command-center.yaml
   - ingressroute-command-center-api.yaml
@@ -12,25 +9,24 @@ resources:
   - middleware-strip-v1.yaml
   - mw-command-center-http11.yaml
   - mw-command-center-sse.yaml
-
-  # API shim + RBAC (if used)
-  - api-shim-configmap.yaml
-  - api-shim-rbac.yaml
-  - api-shim-deploy.yaml
-  - api-shim-service.yaml
-
-  # Netpols
   - netpol-allow-all-to-suite-command-center-ui-80.yaml
   - netpol-allow-all-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-suite-to-suite-command-center-ui.yaml
   - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
   - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
   - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
   - netpol-allow-suite-to-suite-command-center-api-8000.yaml
-  - netpol-allow-api-to-kube-apiserver.yaml
   - netpol-allow-api-shim-egress-k8s.yaml
-
-patchesStrategicMerge:
-  - patch-ingressroute-ui.yaml
-  - patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
-  - patches/patch-ui-service-targetport-3000.yaml
-  - patches/patch-ui-deploy-containerport-3000.yaml
+  - netpol-allow-api-to-kube-apiserver.yaml
+patches:
+  - path: patches/patch-ui-deploy-containerport-80.yaml
+  - path: patches/patch-ui-deploy-containerport-3000.yaml
+  - path: patches/patch-ui-env-bind-0.0.0.0-port-3000.yaml
+  - path: patches/patch-ui-service-targetport-80.yaml
+  - path: patches/patch-ui-service-targetport-3000.yaml
+  - path: patches/patch-api-serviceaccount.yaml
+  - path: patches/patch-api-service-port-80.yaml
+  - path: patches/patch-api-service-targetport-8000.yaml
+  - path: patches/patch-api-service-selector.yaml
+  - path: patch-ingressroute-ui.yaml
+  - path: patch-ingressroute-sse.yaml
