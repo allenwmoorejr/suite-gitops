@@ -1,31 +1,13 @@
+# suite-command-center Helm values
+
 api:
   image:
-    repository: registry.suite.home.arpa:5000/suite-command-center-api
+    repository: 192.168.50.248:5000/suite-command-center-api
     tag: latest
-  service:
-    port: 80
-    targetPort: 8000
+    pullPolicy: IfNotPresent
 
 ui:
   image:
-    repository: registry.suite.home.arpa:5000/suite-command-center-ui
+    repository: 192.168.50.248:5000/suite-command-center-ui
     tag: latest
-  service:
-    port: 80
-    targetPort: 3000
-
-# --- required defaults (prevents nil pointer in templates/serviceaccount.yaml)
-serviceAccount:
-  create: true
-  name: ""
-
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  create: true
-  name: ""
-
-ui:
-  repository: registry.suite.home.arpa:5000/suite-command-center-ui
-  tag: latest
+    pullPolicy: IfNotPresent
