@@ -27,3 +27,9 @@ spec:
               value: "0.0.0.0"
             - name: PORT
               value: "3000"
+{{- if .Values.ui.env }}
+{{- range $k, $v := .Values.ui.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+{{- end }}
+{{- end }}

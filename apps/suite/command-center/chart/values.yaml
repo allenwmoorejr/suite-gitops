@@ -1,13 +1,11 @@
-# suite-command-center Helm values
+ui:
+  repository: 192.168.50.248:5000/suite-command-center-ui
+  tag: 20260109-bossmode
+  env:
+    NEXT_PUBLIC_UI_THEME: "boss"
+    NEXT_PUBLIC_ENABLE_MOTION: "true"
+    NEXT_PUBLIC_ENABLE_CARDS: "true"
 
 api:
-  image:
-    repository: 192.168.50.248:5000/suite-command-center-api
-    tag: latest
-    pullPolicy: IfNotPresent
-
-ui:
-  image:
-    repository: 192.168.50.248:5000/suite-command-center-ui
-    tag: latest
-    pullPolicy: IfNotPresent
+  repository: 192.168.50.248:5000/suite-command-center-api
+  tag: latest
