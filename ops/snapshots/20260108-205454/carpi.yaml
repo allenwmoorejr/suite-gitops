@@ -1,0 +1,440 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "41"
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    generation: 45
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: dash-api
+    namespace: carpi
+    resourceVersion: "66635666"
+    uid: 5612031f-fe7a-4815-9889-c0ae1b6ffc4c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: dash-api
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-19T14:49:17-06:00"
+        creationTimestamp: null
+        labels:
+          app: dash-api
+      spec:
+        containers:
+        - env:
+          - name: MQTT_HOST
+            value: mosquitto
+          - name: MQTT_PORT
+            value: "1883"
+          - name: MQTT_TOPIC
+            value: carpi/#
+          image: 192.168.50.248:5000/dash-api:8a3d1b3-104516
+          imagePullPolicy: IfNotPresent
+          name: dash-api
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-01T16:08:30Z"
+      lastUpdateTime: "2026-01-01T16:08:30Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-20T16:33:19Z"
+      lastUpdateTime: "2026-01-09T00:45:46Z"
+      message: ReplicaSet "dash-api-697646b7d5" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 45
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "18"
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    generation: 20
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: dash-ui
+    namespace: carpi
+    resourceVersion: "66621747"
+    uid: 7434dba0-f2aa-494d-9e81-36d798217764
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: dash-ui
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-15T18:01:11-06:00"
+        creationTimestamp: null
+        labels:
+          app: dash-ui
+      spec:
+        containers:
+        - image: 192.168.50.248:5000/dash-ui:7a232f6
+          imagePullPolicy: IfNotPresent
+          name: dash-ui
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          carpi: "true"
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-09T00:15:02Z"
+      lastUpdateTime: "2026-01-09T00:15:02Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-21T02:05:20Z"
+      lastUpdateTime: "2026-01-09T00:15:02Z"
+      message: ReplicaSet "dash-ui-6959b645d8" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 20
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "41"
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    generation: 46
+    labels:
+      app: gps-agent
+      app.kubernetes.io/managed-by: Helm
+    name: gps-agent
+    namespace: carpi
+    resourceVersion: "65359673"
+    uid: db4733ac-cf6f-4c63-b464-64d2c2b8702b
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: gps-agent
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-06T18:46:09-06:00"
+        creationTimestamp: null
+        labels:
+          app: gps-agent
+      spec:
+        containers:
+        - env:
+          - name: MQTT_HOST
+            value: mosquitto
+          - name: MQTT_PORT
+            value: "1883"
+          - name: MQTT_TOPIC
+            value: carpi/gps
+          - name: GPS_DEVICE
+            value: /dev/gps
+          - name: GPS_BAUD
+            value: "9600"
+          - name: PYTHONUNBUFFERED
+            value: "1"
+          - name: LOG_LEVEL
+            value: INFO
+          image: 192.168.50.248:5000/gps-agent:arm64
+          imagePullPolicy: IfNotPresent
+          name: gps-agent
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              drop:
+              - ALL
+            privileged: true
+            runAsGroup: 0
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /dev/gps
+            name: gps-dev
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -lc
+          - |
+            until nc -z mosquitto 1883; do echo "waiting for mqtt mosquitto:1883"; sleep 2; done
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          name: wait-mqtt
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        nodeSelector:
+          carpi-gps: "true"
+          carpi.gps: "true"
+          kubernetes.io/hostname: w7
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          supplementalGroups:
+          - 20
+        terminationGracePeriodSeconds: 1
+        volumes:
+        - hostPath:
+            path: /dev/ttyACM0
+            type: CharDevice
+          name: gps-dev
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-07T00:45:41Z"
+      lastUpdateTime: "2026-01-07T00:46:15Z"
+      message: ReplicaSet "gps-agent-bb8f4bf7" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-07T01:23:09Z"
+      lastUpdateTime: "2026-01-07T01:23:09Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 46
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: dash-api
+    namespace: carpi
+    resourceVersion: "52555247"
+    uid: 107a7d4a-1acc-4144-b9cc-1d0639db974a
+  spec:
+    clusterIP: 10.43.46.182
+    clusterIPs:
+    - 10.43.46.182
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: dash-api
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: dash-ui
+    namespace: carpi
+    resourceVersion: "52555249"
+    uid: f1aa39e8-fb24-457d-8b8b-129b322b3db7
+  spec:
+    clusterIP: 10.43.244.25
+    clusterIPs:
+    - 10.43.244.25
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: dash-ui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-13T22:56:09Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: mosquitto
+    namespace: carpi
+    resourceVersion: "51445223"
+    uid: 4ee75a08-6c92-4d4e-9f4c-80e636af6cc9
+  spec:
+    clusterIP: 10.43.62.164
+    clusterIPs:
+    - 10.43.62.164
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    selector:
+      app: mosquitto
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: traefik.io/v1alpha1
+  kind: IngressRoute
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-19T03:11:44Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: carpi-api
+    namespace: carpi
+    resourceVersion: "54171707"
+    uid: b571bf94-c9e0-45cc-9b86-bb20f6a030ed
+  spec:
+    entryPoints:
+    - websecure
+    routes:
+    - kind: Rule
+      match: Host(`carpi-api.suite.home.arpa`) && PathPrefix(`/`)
+      services:
+      - kind: Service
+        name: dash-api
+        passHostHeader: true
+        port: 8080
+    tls:
+      secretName: carpi-api-tls
+- apiVersion: traefik.io/v1alpha1
+  kind: IngressRoute
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"traefik.io/v1alpha1","kind":"IngressRoute","metadata":{"annotations":{},"name":"carpi-ui","namespace":"carpi"},"spec":{"entryPoints":["websecure"],"routes":[{"kind":"Rule","match":"Host(`carpi-ui.suite.home.arpa`) \u0026\u0026 PathPrefix(`/ws`)","services":[{"name":"dash-api","port":8080}]},{"kind":"Rule","match":"Host(`carpi-ui.suite.home.arpa`) \u0026\u0026 PathPrefix(`/api`)","services":[{"name":"dash-api","port":8080}]},{"kind":"Rule","match":"Host(`carpi-ui.suite.home.arpa`)","services":[{"name":"dash-ui","port":80}]}],"tls":{"secretName":"carpi-ui-tls"}}}
+      meta.helm.sh/release-name: carpi
+      meta.helm.sh/release-namespace: carpi
+    creationTimestamp: "2025-12-19T03:00:54Z"
+    generation: 5
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: carpi-ui
+    namespace: carpi
+    resourceVersion: "55163337"
+    uid: dea0910f-dd1c-441b-a7dc-1349e8469699
+  spec:
+    entryPoints:
+    - websecure
+    routes:
+    - kind: Rule
+      match: Host(`carpi-ui.suite.home.arpa`) && PathPrefix(`/ws`)
+      services:
+      - name: dash-api
+        port: 8080
+    - kind: Rule
+      match: Host(`carpi-ui.suite.home.arpa`) && PathPrefix(`/api`)
+      services:
+      - name: dash-api
+        port: 8080
+    - kind: Rule
+      match: Host(`carpi-ui.suite.home.arpa`) && Path(`/health`)
+      services:
+      - name: dash-api
+        port: 8080
+    - kind: Rule
+      match: Host(`carpi-ui.suite.home.arpa`)
+      services:
+      - name: dash-ui
+        port: 80
+    tls:
+      secretName: carpi-ui-tls
+kind: List
+metadata:
+  resourceVersion: ""

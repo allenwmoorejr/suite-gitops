@@ -1,0 +1,2444 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2025-10-04T03:41:42Z"
+    generation: 2
+    labels:
+      app: clm
+    name: clm
+    namespace: suite
+    resourceVersion: "66667097"
+    uid: bffb52eb-32ce-4c63-a3c7-f9b3fb018f4d
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: clm
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: clm
+      spec:
+        containers:
+        - image: allenwayne/clm
+          imagePullPolicy: Always
+          name: clm-clean
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    conditions:
+    - lastTransitionTime: "2025-10-04T03:41:42Z"
+      lastUpdateTime: "2025-10-04T03:42:54Z"
+      message: ReplicaSet "clm-58888847cd" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-09T01:56:10Z"
+      lastUpdateTime: "2026-01-09T01:56:10Z"
+      message: Deployment does not have minimum availability.
+      reason: MinimumReplicasUnavailable
+      status: "False"
+      type: Available
+    observedGeneration: 2
+    replicas: 1
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "44"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"homebridge","namespace":"suite"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"homebridge"}},"template":{"metadata":{"labels":{"app":"homebridge"}},"spec":{"containers":[{"env":[{"name":"TZ","value":"America/Chicago"},{"name":"HOMEBRIDGE_CONFIG_UI","value":"1"},{"name":"HOMEBRIDGE_CONFIG_UI_PORT","value":"8581"},{"name":"HOMEBRIDGE_CONFIG_UI_HOST","value":"0.0.0.0"},{"name":"HOMEBRIDGE_DISABLE_IPV6","value":"1"},{"name":"NODE_OPTIONS","value":"--dns-result-order=ipv4first"}],"image":"homebridge/homebridge:latest","name":"homebridge","ports":[{"containerPort":8581,"name":"ui"},{"containerPort":51443,"name":"hap"}],"volumeMounts":[{"mountPath":"/homebridge","name":"data"}]}],"nodeSelector":{"homekit":"bridge"},"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"homebridge-data-longhorn"}}]}}}}
+    creationTimestamp: "2025-09-12T12:53:26Z"
+    generation: 47
+    name: homebridge
+    namespace: suite
+    resourceVersion: "62524621"
+    uid: 8e4a2527-6b40-42c8-b340-b884931ae03c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: homebridge
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-11-22T14:22:52-06:00"
+        creationTimestamp: null
+        labels:
+          app: homebridge
+      spec:
+        containers:
+        - env:
+          - name: TZ
+            value: America/Chicago
+          - name: HOMEBRIDGE_CONFIG_UI
+            value: "1"
+          - name: HOMEBRIDGE_CONFIG_UI_PORT
+            value: "8581"
+          - name: HOMEBRIDGE_CONFIG_UI_HOST
+            value: 0.0.0.0
+          - name: HOMEBRIDGE_DISABLE_IPV6
+            value: "1"
+          - name: NODE_OPTIONS
+            value: --dns-result-order=ipv4first
+          - name: HOMEBRIDGE_ADVERTISER
+            value: ciao
+          - name: HOMEBRIDGE_MDNS_INTERFACE
+            value: eth0
+          - name: HOMEBRIDGE_ENABLE_IPV6
+            value: "0"
+          image: homebridge/homebridge:latest
+          imagePullPolicy: Always
+          name: homebridge
+          ports:
+          - containerPort: 8581
+            name: ui
+            protocol: TCP
+          - containerPort: 51443
+            name: hap
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /homebridge
+            name: data
+          - mountPath: /etc/avahi/avahi-daemon.conf
+            name: avahi-config
+            subPath: avahi-daemon.conf
+        dnsConfig:
+          nameservers:
+          - 1.1.1.1
+          - 8.8.8.8
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+        nodeSelector:
+          homekit: bridge
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: homebridge-avahi
+          name: avahi-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: homebridge-data-longhorn
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-11-13T00:02:55Z"
+      lastUpdateTime: "2025-11-22T20:22:56Z"
+      message: ReplicaSet "homebridge-7b5b8cdf94" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-02T15:29:54Z"
+      lastUpdateTime: "2026-01-02T15:29:54Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 47
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"jenkins","namespace":"suite"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"jenkins"}},"template":{"metadata":{"labels":{"app":"jenkins"}},"spec":{"containers":[{"env":[{"name":"JAVA_OPTS","value":"-Djenkins.install.runSetupWizard=false"}],"image":"jenkins/jenkins:lts-jdk17","imagePullPolicy":"IfNotPresent","livenessProbe":{"httpGet":{"path":"/login","port":8080},"initialDelaySeconds":60,"periodSeconds":20},"name":"jenkins","ports":[{"containerPort":8080,"name":"http"},{"containerPort":50000,"name":"agent"}],"readinessProbe":{"httpGet":{"path":"/login","port":8080},"initialDelaySeconds":30,"periodSeconds":10},"resources":{"limits":{"cpu":"1","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/var/jenkins_home","name":"jenkins-home"}]}],"securityContext":{"fsGroup":1000},"serviceAccountName":"jenkins","volumes":[{"name":"jenkins-home","persistentVolumeClaim":{"claimName":"jenkins-home"}}]}}}}
+    creationTimestamp: "2025-11-02T14:51:36Z"
+    generation: 2
+    name: jenkins
+    namespace: suite
+    resourceVersion: "65768608"
+    uid: 1e309af3-2042-40f5-b9e4-9e0c9aa8a8a9
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: jenkins
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-02T20:02:26-06:00"
+        creationTimestamp: null
+        labels:
+          app: jenkins
+      spec:
+        containers:
+        - env:
+          - name: JAVA_OPTS
+            value: -Djenkins.install.runSetupWizard=false
+          image: jenkins/jenkins:lts-jdk17
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: jenkins
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 50000
+            name: agent
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/jenkins_home
+            name: jenkins-home
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1000
+        serviceAccount: jenkins
+        serviceAccountName: jenkins
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-home
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-03T02:31:02Z"
+      lastUpdateTime: "2026-01-03T02:33:30Z"
+      message: ReplicaSet "jenkins-7b56fbb79c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-07T16:41:03Z"
+      lastUpdateTime: "2026-01-07T16:41:03Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2025-10-28T18:05:03Z"
+    generation: 1
+    name: magicmirror-app
+    namespace: suite
+    resourceVersion: "62525714"
+    uid: bcc9f2e9-bafc-4800-9aef-5fb8601ea11e
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: magicmirror-app
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          allow-egress: internet
+          app: magicmirror-app
+      spec:
+        containers:
+        - env:
+          - name: MM_CONFIG_FILE
+            value: /opt/magic_mirror/config/config.js
+          - name: NODE_ENV
+            value: production
+          image: docker.io/bastilimbach/docker-magicmirror:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 25
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: magicmirror
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 12
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 800m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/magic_mirror/config/config.js
+            name: mm-config
+            readOnly: true
+            subPath: config.js
+          - mountPath: /opt/magic_mirror/modules
+            name: modules-work
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - args:
+          - |
+            set -e
+            # Start with image defaults
+            cp -a /opt/magic_mirror/modules/. /work/
+            mkdir -p /work/custom
+            # Merge persisted customs (if any)
+            cp -a /persist/. /work/custom/ 2>/dev/null || true
+          command:
+          - /bin/sh
+          - -lc
+          image: docker.io/bastilimbach/docker-magicmirror:latest
+          imagePullPolicy: IfNotPresent
+          name: seed-modules
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /work
+            name: modules-work
+          - mountPath: /persist
+            name: mm-persist
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: magicmirror-config
+          name: mm-config
+        - name: mm-persist
+          persistentVolumeClaim:
+            claimName: mm-modules-pvc
+        - emptyDir: {}
+          name: modules-work
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-10-28T18:05:03Z"
+      lastUpdateTime: "2025-10-28T18:05:22Z"
+      message: ReplicaSet "magicmirror-app-79d76f44c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-02T15:30:45Z"
+      lastUpdateTime: "2026-01-02T15:30:45Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"magicmirror-server","namespace":"suite"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"magicmirror-server"}},"strategy":{"type":"Recreate"},"template":{"metadata":{"labels":{"app":"magicmirror-server"}},"spec":{"containers":[{"args":["npm run server"],"command":["/bin/sh","-lc"],"env":[{"name":"TZ","value":"America/Chicago"},{"name":"OPENWEATHER_API_KEY","valueFrom":{"secretKeyRef":{"key":"API_KEY","name":"openweather"}}}],"image":"docker.io/allenwayne/magicmirror-server:2.32","livenessProbe":{"httpGet":{"path":"/","port":8080},"initialDelaySeconds":30,"periodSeconds":20},"name":"magicmirror","ports":[{"containerPort":8080}],"volumeMounts":[{"mountPath":"/opt/magic_mirror/config/config.js","name":"mm-config","subPath":"config.js"},{"mountPath":"/opt/magic_mirror/modules","name":"mm-modules"},{"mountPath":"/opt/magic_mirror/public","name":"mm-public"}]}],"initContainers":[{"args":["set -eux\nrm -rf /work/modules/* /work/public/* || true\nif [ -d /opt/magic_mirror/modules ]; then\n  cp -a /opt/magic_mirror/modules/. /work/modules/\nfi\nif [ -d /opt/magic_mirror/public ]; then\n  cp -a /opt/magic_mirror/public/. /work/public/\nfi\n"],"command":["/bin/sh","-lc"],"image":"docker.io/allenwayne/magicmirror-server:2.32","name":"seed-modules","volumeMounts":[{"mountPath":"/work/modules","name":"mm-modules"},{"mountPath":"/work/public","name":"mm-public"}]},{"args":["echo skipping git-modules; exit 0"],"command":["/bin/sh","-lc"],"image":"alpine:3.20","name":"git-modules","volumeMounts":[{"mountPath":"/work/modules","name":"mm-modules"},{"mountPath":"/work/public","name":"mm-public"},{"mountPath":"/extras","name":"mm-extras"}]}],"nodeSelector":{"kubernetes.io/hostname":"m3"},"volumes":[{"configMap":{"name":"magicmirror-config"},"name":"mm-config"},{"emptyDir":{},"name":"mm-modules"},{"emptyDir":{},"name":"mm-public"},{"configMap":{"name":"magicmirror-extras"},"name":"mm-extras"}]}}}}
+    creationTimestamp: "2025-11-08T02:10:23Z"
+    generation: 1
+    name: magicmirror-server
+    namespace: suite
+    resourceVersion: "62521736"
+    uid: e432d4fc-6664-4f1a-8eda-709c4ffcde63
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: magicmirror-server
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: magicmirror-server
+      spec:
+        containers:
+        - args:
+          - npm run server
+          command:
+          - /bin/sh
+          - -lc
+          env:
+          - name: TZ
+            value: America/Chicago
+          - name: OPENWEATHER_API_KEY
+            valueFrom:
+              secretKeyRef:
+                key: API_KEY
+                name: openweather
+          image: docker.io/allenwayne/magicmirror-server:2.32
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: magicmirror
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/magic_mirror/config/config.js
+            name: mm-config
+            subPath: config.js
+          - mountPath: /opt/magic_mirror/modules
+            name: mm-modules
+          - mountPath: /opt/magic_mirror/public
+            name: mm-public
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - args:
+          - |
+            set -eux
+            rm -rf /work/modules/* /work/public/* || true
+            if [ -d /opt/magic_mirror/modules ]; then
+              cp -a /opt/magic_mirror/modules/. /work/modules/
+            fi
+            if [ -d /opt/magic_mirror/public ]; then
+              cp -a /opt/magic_mirror/public/. /work/public/
+            fi
+          command:
+          - /bin/sh
+          - -lc
+          image: docker.io/allenwayne/magicmirror-server:2.32
+          imagePullPolicy: IfNotPresent
+          name: seed-modules
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /work/modules
+            name: mm-modules
+          - mountPath: /work/public
+            name: mm-public
+        - args:
+          - echo skipping git-modules; exit 0
+          command:
+          - /bin/sh
+          - -lc
+          image: alpine:3.20
+          imagePullPolicy: IfNotPresent
+          name: git-modules
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /work/modules
+            name: mm-modules
+          - mountPath: /work/public
+            name: mm-public
+          - mountPath: /extras
+            name: mm-extras
+        nodeSelector:
+          kubernetes.io/hostname: m3
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: magicmirror-config
+          name: mm-config
+        - emptyDir: {}
+          name: mm-modules
+        - emptyDir: {}
+          name: mm-public
+        - configMap:
+            defaultMode: 420
+            name: magicmirror-extras
+          name: mm-extras
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-11-08T02:10:24Z"
+      lastUpdateTime: "2025-11-08T02:10:27Z"
+      message: ReplicaSet "magicmirror-server-5c8f999799" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-02T15:28:36Z"
+      lastUpdateTime: "2026-01-02T15:28:36Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "31"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"30"},"creationTimestamp":"2025-09-12T12:53:26Z","generation":40,"name":"pihole","namespace":"suite","resourceVersion":"37681377","uid":"c641337e-588b-4870-97a6-eefb0f7cc2d3"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"pihole"}},"strategy":{"type":"Recreate"},"template":{"metadata":{"annotations":{"kubectl.kubernetes.io/restartedAt":"2025-11-15T09:02:01-06:00"},"creationTimestamp":null,"labels":{"app":"pihole"}},"spec":{"containers":[{"env":[{"name":"DNSMASQ_LISTENING","value":"all"},{"name":"ServerIP","value":"192.168.50.245"},{"name":"WEB_PORT","value":"80"},{"name":"PIHOLE_DNS_1","value":"1.1.1.1"},{"name":"PIHOLE_DNS_2","value":"9.9.9.9"},{"name":"DNSSEC","value":"false"},{"name":"TZ","value":"America/Chicago"}],"image":"pihole/pihole:latest","imagePullPolicy":"Always","name":"pihole","ports":[{"containerPort":53,"name":"dns-udp","protocol":"UDP"},{"containerPort":53,"name":"dns-tcp","protocol":"TCP"},{"containerPort":80,"name":"http","protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/etc/dnsmasq.d","name":"etc-dnsmasq"},{"mountPath":"/etc/dnsmasq.d/01-ui-host.conf","name":"ui-override","subPath":"01-ui-host.conf"},{"mountPath":"/etc/dnsmasq.d/02-suite-home-arpa.conf","name":"dnsmasq-cm","subPath":"02-suite-home-arpa.conf"},{"mountPath":"/etc/dnsmasq.d/03-custom.conf","name":"dnsmasq-custom","subPath":"03-custom.conf"},{"mountPath":"/etc/pihole","name":"etc-pihole"}]}],"dnsPolicy":"ClusterFirst","nodeSelector":{"kubernetes.io/arch":"arm64","kubernetes.io/hostname":"m2"},"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30,"volumes":[{"name":"etc-pihole","persistentVolumeClaim":{"claimName":"pihole-etc-pihole-pvc-longhorn"}},{"name":"etc-dnsmasq","persistentVolumeClaim":{"claimName":"pihole-dnsmasq-pvc-longhorn"}},{"configMap":{"defaultMode":420,"name":"pihole-dnsmasq"},"name":"dnsmasq-cm"},{"configMap":{"defaultMode":420,"name":"pihole-ui-override"},"name":"ui-override"},{"configMap":{"defaultMode":420,"name":"pihole-dnsmasq-custom"},"name":"dnsmasq-custom"}]}}},"status":{"availableReplicas":1,"conditions":[{"lastTransitionTime":"2025-11-11T15:55:35Z","lastUpdateTime":"2025-11-15T15:02:19Z","message":"ReplicaSet \"pihole-dd4df85d\" has successfully progressed.","reason":"NewReplicaSetAvailable","status":"True","type":"Progressing"},{"lastTransitionTime":"2025-11-18T03:26:33Z","lastUpdateTime":"2025-11-18T03:26:33Z","message":"Deployment has minimum availability.","reason":"MinimumReplicasAvailable","status":"True","type":"Available"}],"observedGeneration":40,"readyReplicas":1,"replicas":1,"updatedReplicas":1}}
+    creationTimestamp: "2025-09-12T12:53:26Z"
+    generation: 42
+    name: pihole
+    namespace: suite
+    resourceVersion: "62525280"
+    uid: c641337e-588b-4870-97a6-eefb0f7cc2d3
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pihole
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-12-10T09:43:15-06:00"
+        creationTimestamp: null
+        labels:
+          app: pihole
+      spec:
+        containers:
+        - env:
+          - name: DNSMASQ_LISTENING
+            value: all
+          - name: ServerIP
+            value: 192.168.50.245
+          - name: WEB_PORT
+            value: "80"
+          - name: PIHOLE_DNS_1
+            value: 1.1.1.1
+          - name: PIHOLE_DNS_2
+            value: 9.9.9.9
+          - name: DNSSEC
+            value: "false"
+          - name: TZ
+            value: America/Chicago
+          image: pihole/pihole:latest
+          imagePullPolicy: Always
+          name: pihole
+          ports:
+          - containerPort: 53
+            name: dns-udp
+            protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/dnsmasq.d
+            name: etc-dnsmasq
+          - mountPath: /etc/dnsmasq.d/01-ui-host.conf
+            name: ui-override
+            subPath: 01-ui-host.conf
+          - mountPath: /etc/dnsmasq.d/02-suite-home-arpa.conf
+            name: dnsmasq-cm
+            subPath: 02-suite-home-arpa.conf
+          - mountPath: /etc/dnsmasq.d/03-custom.conf
+            name: dnsmasq-custom
+            subPath: 03-custom.conf
+          - mountPath: /etc/pihole
+            name: etc-pihole
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/arch: arm64
+          kubernetes.io/hostname: m2
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: etc-pihole
+          persistentVolumeClaim:
+            claimName: pihole-etc-pihole-pvc-longhorn
+        - name: etc-dnsmasq
+          persistentVolumeClaim:
+            claimName: pihole-dnsmasq-pvc-longhorn
+        - configMap:
+            defaultMode: 420
+            name: pihole-dnsmasq
+          name: dnsmasq-cm
+        - configMap:
+            defaultMode: 420
+            name: pihole-ui-override
+          name: ui-override
+        - configMap:
+            defaultMode: 420
+            name: pihole-dnsmasq-custom
+          name: dnsmasq-custom
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-11-11T15:55:35Z"
+      lastUpdateTime: "2025-12-10T15:43:27Z"
+      message: ReplicaSet "pihole-7cbbb589c4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-02T15:30:21Z"
+      lastUpdateTime: "2026-01-02T15:30:21Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 42
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"scrypted","namespace":"suite"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"scrypted"}},"template":{"metadata":{"labels":{"app":"scrypted"}},"spec":{"containers":[{"image":"koush/scrypted:latest","name":"scrypted","ports":[{"containerPort":11080,"name":"ui"}]}]}}}}
+    creationTimestamp: "2026-01-03T12:32:53Z"
+    generation: 3
+    name: scrypted
+    namespace: suite
+    resourceVersion: "63309059"
+    uid: c7b5d281-fa54-4a72-8e28-b435c3095f08
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: scrypted
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-03T14:36:15-06:00"
+        creationTimestamp: null
+        labels:
+          app: scrypted
+      spec:
+        containers:
+        - image: koush/scrypted:latest
+          imagePullPolicy: Always
+          name: scrypted
+          ports:
+          - containerPort: 11080
+            name: http
+            protocol: TCP
+          - containerPort: 10443
+            name: https
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-03T17:00:02Z"
+      lastUpdateTime: "2026-01-03T17:00:02Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-03T12:32:53Z"
+      lastUpdateTime: "2026-01-03T20:36:41Z"
+      message: ReplicaSet "scrypted-7895976575" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: suite-command-center
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2026-01-08T04:37:15Z"
+    generation: 3
+    labels:
+      app: suite-command-center-api
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: suite-command-center
+      helm.toolkit.fluxcd.io/namespace: suite
+    name: suite-command-center-api
+    namespace: suite
+    resourceVersion: "66626096"
+    uid: ee4e06f5-cd60-439d-84a5-7de3a2ef5cc8
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: suite-command-center-api
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-08T16:36:24-06:00"
+        creationTimestamp: null
+        labels:
+          app: suite-command-center-api
+      spec:
+        containers:
+        - image: 192.168.50.248:5000/suite-command-center-api:latest
+          imagePullPolicy: IfNotPresent
+          name: api
+          ports:
+          - containerPort: 8000
+            name: http
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: suite-command-center-api
+        serviceAccountName: suite-command-center-api
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-09T00:24:23Z"
+      lastUpdateTime: "2026-01-09T00:24:23Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-08T23:38:35Z"
+      lastUpdateTime: "2026-01-09T00:24:23Z"
+      message: ReplicaSet "suite-command-center-api-5f6cc49cc4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: suite-command-center
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2026-01-08T04:37:15Z"
+    generation: 2
+    labels:
+      app: suite-command-center-ui
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: suite-command-center
+      helm.toolkit.fluxcd.io/namespace: suite
+    name: suite-command-center-ui
+    namespace: suite
+    resourceVersion: "66635726"
+    uid: a9dd4906-89dc-4d08-84e8-ede366ac5a96
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: suite-command-center-ui
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: suite-command-center-ui
+      spec:
+        containers:
+        - env:
+          - name: HOSTNAME
+            value: 0.0.0.0
+          - name: PORT
+            value: "3000"
+          image: 192.168.50.248:5000/suite-command-center-ui:latest
+          imagePullPolicy: IfNotPresent
+          name: ui
+          ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-08T04:37:17Z"
+      lastUpdateTime: "2026-01-08T04:37:17Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-08T04:37:15Z"
+      lastUpdateTime: "2026-01-09T00:45:48Z"
+      message: ReplicaSet "suite-command-center-ui-5c59b74644" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"camera-esp32-relay"},"name":"camera-esp32-relay-public","namespace":"suite"},"spec":{"ports":[{"name":"rtsp","port":8554,"targetPort":"rtsp"},{"name":"hls","port":8888,"targetPort":"hls"},{"name":"webrtc","port":8889,"targetPort":"webrtc"}],"selector":{"app":"camera-esp32-relay"},"type":"LoadBalancer"}}
+    creationTimestamp: "2025-09-19T14:23:21Z"
+    deletionGracePeriodSeconds: 0
+    deletionTimestamp: "2025-10-17T02:14:16Z"
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    labels:
+      app: camera-esp32-relay
+    name: camera-esp32-relay-public
+    namespace: suite
+    resourceVersion: "21791206"
+    uid: 49ba0ebd-3eab-46ed-a335-6af5ace0c0a1
+  spec:
+    allocateLoadBalancerNodePorts: true
+    clusterIP: 10.43.249.89
+    clusterIPs:
+    - 10.43.249.89
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: rtsp
+      nodePort: 32575
+      port: 8554
+      protocol: TCP
+      targetPort: rtsp
+    - name: hls
+      nodePort: 30425
+      port: 8888
+      protocol: TCP
+      targetPort: hls
+    - name: webrtc
+      nodePort: 31640
+      port: 8889
+      protocol: TCP
+      targetPort: webrtc
+    selector:
+      app: camera-esp32-relay
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.50.3
+        ipMode: VIP
+      - ip: 192.168.50.9
+        ipMode: VIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2025-11-28T18:13:08Z"
+    labels:
+      app: clm
+    name: clm
+    namespace: suite
+    resourceVersion: "43102643"
+    uid: abe2598b-7bf6-401c-9318-5663d7f73acd
+  spec:
+    allocateLoadBalancerNodePorts: true
+    clusterIP: 10.43.93.181
+    clusterIPs:
+    - 10.43.93.181
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - nodePort: 30968
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: clm
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.50.241
+        ipMode: VIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"homebridge","namespace":"suite"},"spec":{"ports":[{"name":"ui","port":8581,"targetPort":8581},{"name":"https","port":51443,"targetPort":51443}],"selector":{"app":"homebridge"}}}
+    creationTimestamp: "2025-09-12T12:53:26Z"
+    name: homebridge
+    namespace: suite
+    resourceVersion: "40082613"
+    uid: cfa18a04-7c93-4e97-a234-c62400493acf
+  spec:
+    clusterIP: 10.43.54.215
+    clusterIPs:
+    - 10.43.54.215
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: ui
+      port: 8581
+      protocol: TCP
+      targetPort: 8581
+    - name: https
+      port: 51443
+      protocol: TCP
+      targetPort: 51443
+    selector:
+      app: homebridge
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"jenkins","namespace":"suite"},"spec":{"ports":[{"name":"http","port":8080,"targetPort":8080},{"name":"agent","port":50000,"targetPort":50000}],"selector":{"app":"jenkins"},"type":"ClusterIP"}}
+    creationTimestamp: "2025-11-02T14:51:36Z"
+    name: jenkins
+    namespace: suite
+    resourceVersion: "32567626"
+    uid: 0e5b0d42-a4f3-4f19-9e4d-29f0a85558bd
+  spec:
+    clusterIP: 10.43.166.247
+    clusterIPs:
+    - 10.43.166.247
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: agent
+      port: 50000
+      protocol: TCP
+      targetPort: 50000
+    selector:
+      app: jenkins
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"magicmirror-hostport","namespace":"suite"},"spec":{"externalTrafficPolicy":"Local","ports":[{"name":"http","nodePort":32181,"port":8080,"targetPort":8081}],"selector":{"app.kubernetes.io/name":"magicmirror"},"type":"NodePort"}}
+      meta.helm.sh/release-name: magicmirror
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2025-10-03T02:43:42Z"
+    labels:
+      app.kubernetes.io/instance: magicmirror
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: magicmirror-server
+    name: magicmirror-hostport
+    namespace: suite
+    resourceVersion: "26528178"
+    uid: 7a6a6bdb-1342-4377-bbd5-4fd5db6dee4c
+  spec:
+    clusterIP: 10.43.30.137
+    clusterIPs:
+    - 10.43.30.137
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: magicmirror-app
+    sessionAffinity: ClientIP
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"magicmirror-server","namespace":"suite"},"spec":{"ports":[{"port":8080,"targetPort":8080}],"selector":{"app":"magicmirror-server"}}}
+    creationTimestamp: "2025-10-02T16:43:26Z"
+    name: magicmirror-server
+    namespace: suite
+    resourceVersion: "32567641"
+    uid: 0ae8ff75-13a8-4d4e-abdb-553ec3eaf2db
+  spec:
+    clusterIP: 10.43.191.110
+    clusterIPs:
+    - 10.43.191.110
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: magicmirror-server
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mosquitto","namespace":"suite"},"spec":{"ports":[{"name":"mqtt","port":1883,"targetPort":1883}],"selector":{"app":"mosquitto"}}}
+    creationTimestamp: "2025-09-12T12:53:25Z"
+    name: mosquitto
+    namespace: suite
+    resourceVersion: "32567686"
+    uid: 151a17e3-37f9-491a-bde4-684aa72aa4d9
+  spec:
+    clusterIP: 10.43.34.37
+    clusterIPs:
+    - 10.43.34.37
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    selector:
+      app: mosquitto
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mosquitto-headless","namespace":"suite"},"spec":{"clusterIP":"None","ports":[{"name":"mqtt","port":1883,"protocol":"TCP","targetPort":1883}],"selector":{"app":"mosquitto"}}}
+    creationTimestamp: "2025-09-27T12:58:04Z"
+    name: mosquitto-headless
+    namespace: suite
+    resourceVersion: "12961422"
+    uid: 70c27268-04d8-497e-bdc5-636d74f64eaf
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    selector:
+      app: mosquitto
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2025-09-12T12:53:26Z","finalizers":["service.kubernetes.io/load-balancer-cleanup"],"name":"pihole","namespace":"suite","resourceVersion":"38141993","uid":"dc1b1f61-c173-4187-a5c5-60ade3c33c4f"},"spec":{"allocateLoadBalancerNodePorts":true,"clusterIP":"10.43.157.234","clusterIPs":["10.43.157.234"],"externalTrafficPolicy":"Local","healthCheckNodePort":32749,"internalTrafficPolicy":"Cluster","ipFamilies":["IPv4"],"ipFamilyPolicy":"SingleStack","loadBalancerIP":"192.168.50.245","ports":[{"name":"dns-udp","nodePort":31173,"port":53,"protocol":"UDP","targetPort":53},{"name":"dns-tcp","nodePort":32643,"port":53,"protocol":"TCP","targetPort":53},{"name":"http","nodePort":31961,"port":80,"protocol":"TCP","targetPort":80}],"selector":{"app":"pihole"},"sessionAffinity":"None","type":"LoadBalancer"},"status":{"loadBalancer":{"ingress":[{"ip":"192.168.50.245","ipMode":"VIP"}]}}}
+    creationTimestamp: "2025-09-12T12:53:26Z"
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    name: pihole
+    namespace: suite
+    resourceVersion: "38155529"
+    uid: dc1b1f61-c173-4187-a5c5-60ade3c33c4f
+  spec:
+    allocateLoadBalancerNodePorts: true
+    clusterIP: 10.43.157.234
+    clusterIPs:
+    - 10.43.157.234
+    externalTrafficPolicy: Local
+    healthCheckNodePort: 32749
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    loadBalancerIP: 192.168.50.245
+    ports:
+    - name: dns-udp
+      nodePort: 31173
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      nodePort: 32643
+      port: 53
+      protocol: TCP
+      targetPort: 53
+    - name: http
+      nodePort: 31961
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: pihole
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.50.245
+        ipMode: VIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: magicmirror
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2025-10-20T00:58:05Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: spotify-callback
+    namespace: suite
+    resourceVersion: "23244887"
+    uid: 8cce2f3a-5404-4db4-b810-a01b45f9d82d
+  spec:
+    clusterIP: 10.43.50.117
+    clusterIPs:
+    - 10.43.50.117
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: spotify-callback
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: suite-command-center
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2026-01-08T04:37:15Z"
+    labels:
+      app: suite-command-center-api
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: suite-command-center
+      helm.toolkit.fluxcd.io/namespace: suite
+    name: suite-command-center-api
+    namespace: suite
+    resourceVersion: "66092322"
+    uid: cb4dcef7-6f4a-4ef8-a666-cb596a702b12
+  spec:
+    clusterIP: 10.43.220.170
+    clusterIPs:
+    - 10.43.220.170
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: suite-command-center-api
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: suite-command-center
+      meta.helm.sh/release-namespace: suite
+    creationTimestamp: "2026-01-08T04:37:15Z"
+    labels:
+      app: suite-command-center-ui
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: suite-command-center
+      helm.toolkit.fluxcd.io/namespace: suite
+    name: suite-command-center-ui
+    namespace: suite
+    resourceVersion: "66092321"
+    uid: b74a918f-2ffb-4f4d-af02-35b6c5822feb
+  spec:
+    clusterIP: 10.43.2.75
+    clusterIPs:
+    - 10.43.2.75
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: suite-command-center-ui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"zigbee2mqtt","namespace":"suite"},"spec":{"ports":[{"name":"ui","port":8081,"targetPort":8081}],"selector":{"app":"zigbee2mqtt"}}}
+    creationTimestamp: "2025-09-12T12:53:26Z"
+    name: zigbee2mqtt
+    namespace: suite
+    resourceVersion: "32567869"
+    uid: bf95faf0-ff1f-4ead-b090-1338cfa7db04
+  spec:
+    clusterIP: 10.43.62.97
+    clusterIPs:
+    - 10.43.62.97
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: ui
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    selector:
+      app: zigbee2mqtt
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: traefik.io/v1alpha1
+  kind: IngressRoute
+  metadata:
+    creationTimestamp: "2025-12-30T01:58:08Z"
+    generation: 9
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: command-center
+    namespace: suite
+    resourceVersion: "66083413"
+    uid: ba0253f0-2393-4450-a9f9-07f210dc9aad
+  spec:
+    entryPoints:
+    - websecure
+    routes:
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/v1`) || PathPrefix(`/stream`))
+      middlewares:
+      - name: command-center-http11
+      - name: command-center-sse
+      services:
+      - name: suite-command-center-api
+        port: 80
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`)
+      services:
+      - name: suite-command-center-ui
+        port: 80
+    tls: {}
+- apiVersion: traefik.io/v1alpha1
+  kind: IngressRoute
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: command-center-api
+    namespace: suite
+    resourceVersion: "66055558"
+    uid: 1f1e032e-e986-41e7-8172-27e469a905d3
+  spec:
+    entryPoints:
+    - websecure
+    routes:
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/api`)
+      middlewares:
+      - name: command-center-strip-api
+      priority: 10000
+      services:
+      - name: suite-command-center-api-shim
+        port: 80
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
+      middlewares:
+      - name: command-center-strip-v1
+      priority: 9990
+      services:
+      - name: suite-command-center-api-shim
+        port: 80
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/cluster`)
+      priority: 9980
+      services:
+      - name: suite-command-center-api-shim
+        port: 80
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/stream`) || PathPrefix(`/sensors`))
+      priority: 9970
+      services:
+      - name: suite-command-center-api-shim
+        port: 80
+    tls: {}
+- apiVersion: traefik.io/v1alpha1
+  kind: IngressRoute
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: command-center-api-sse
+    namespace: suite
+    resourceVersion: "66055559"
+    uid: 4600589b-c4b9-4048-90de-4ea10c5520c5
+  spec:
+    entryPoints:
+    - websecure
+    routes:
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1/events/stream`)
+      services:
+      - name: suite-command-center-api
+        port: 80
+        responseForwarding:
+          flushInterval: 100ms
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-all-to-homebridge","namespace":"suite"},"spec":{"egress":[{}],"ingress":[{}],"podSelector":{"matchLabels":{"app":"homebridge"}},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2025-11-15T15:23:16Z"
+    generation: 1
+    name: allow-all-to-homebridge
+    namespace: suite
+    resourceVersion: "36374062"
+    uid: 0531f2f5-73f7-456f-8a4b-161fac22c2b1
+  spec:
+    egress:
+    - {}
+    ingress:
+    - {}
+    podSelector:
+      matchLabels:
+        app: homebridge
+    policyTypes:
+    - Ingress
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-all-to-pihole","namespace":"suite"},"spec":{"egress":[{}],"ingress":[{}],"podSelector":{"matchLabels":{"app":"pihole"}},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2025-11-15T15:01:51Z"
+    generation: 1
+    name: allow-all-to-pihole
+    namespace: suite
+    resourceVersion: "36366209"
+    uid: 117eb1a6-5ac3-47e1-82ec-cb6b64041536
+  spec:
+    egress:
+    - {}
+    ingress:
+    - {}
+    podSelector:
+      matchLabels:
+        app: pihole
+    policyTypes:
+    - Ingress
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-all-to-suite-command-center-ui-3000
+    namespace: suite
+    resourceVersion: "66055548"
+    uid: b21f49fd-8a0e-4f73-8690-8c5286dc8ae4
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector: {}
+        podSelector: {}
+      ports:
+      - port: 3000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-all-to-suite-command-center-ui-80
+    namespace: suite
+    resourceVersion: "66055550"
+    uid: 3f2d317d-09a3-4971-be2b-ccb11f447d96
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector: {}
+        podSelector: {}
+      ports:
+      - port: 80
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-command-center-api-to-kube-apiserver
+    namespace: suite
+    resourceVersion: "66055552"
+    uid: 88206e9e-6493-4c1d-9b32-13a82c9543cb
+  spec:
+    egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-egress-internet","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]},{"to":[{"ipBlock":{"cidr":"0.0.0.0/0"}}]}],"podSelector":{"matchLabels":{"allow-egress":"internet"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-22T01:55:52Z"
+    generation: 2
+    name: allow-egress-internet
+    namespace: suite
+    resourceVersion: "11480280"
+    uid: 5444962c-656b-4a25-9cb2-78877b6ed8fa
+  spec:
+    egress:
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+    podSelector:
+      matchLabels:
+        allow-egress: internet
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-ingress-to-command-center-api","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"suite-command-center-api"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-12-24T15:37:49Z"
+    generation: 1
+    name: allow-ingress-to-command-center-api
+    namespace: suite
+    resourceVersion: "57079898"
+    uid: bb67f2ac-455b-4843-bd23-44726069d377
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector: {}
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-mediamtx-ingress","namespace":"suite"},"spec":{"ingress":[{"from":[{"podSelector":{}}],"ports":[{"port":8554,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"mediamtx"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-27T12:16:04Z"
+    generation: 1
+    name: allow-mediamtx-ingress
+    namespace: suite
+    resourceVersion: "12949687"
+    uid: 3b74f90c-8b3e-490f-99aa-92543d96b96b
+  spec:
+    ingress:
+    - from:
+      - podSelector: {}
+      ports:
+      - port: 8554
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: mediamtx
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-namespace-to-uploader","namespace":"suite"},"spec":{"ingress":[{"from":[{"podSelector":{}}],"ports":[{"port":80,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"camera-uploader"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-21T13:27:32Z"
+    generation: 2
+    name: allow-namespace-to-uploader
+    namespace: suite
+    resourceVersion: "10656896"
+    uid: 1eea2e98-8ede-463d-ac10-607d99dd023e
+  spec:
+    ingress:
+    - from:
+      - podSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+      ports:
+      - port: 80
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: camera-uploader
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-relay-egress-to-uploader","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":80,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"suite"}},"podSelector":{"matchLabels":{"app":"camera-uploader"}}}]}],"podSelector":{"matchLabels":{"app":"micro-cam-relay"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-23T17:38:11Z"
+    generation: 1
+    name: allow-relay-egress-to-uploader
+    namespace: suite
+    resourceVersion: "11431347"
+    uid: d16e9005-1988-45f7-b78a-1238a96d72c4
+  spec:
+    egress:
+    - ports:
+      - port: 80
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: suite
+        podSelector:
+          matchLabels:
+            app: camera-uploader
+    podSelector:
+      matchLabels:
+        app: micro-cam-relay
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-same-namespace-and-dns","namespace":"suite"},"spec":{"egress":[{"to":[{"podSelector":{}}]},{"to":[{"ipBlock":{"cidr":"10.43.0.0/16"}}]},{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]}],"ingress":[{"from":[{"podSelector":{}}]}],"podSelector":{},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2025-09-21T22:40:44Z"
+    generation: 3
+    name: allow-same-namespace-and-dns
+    namespace: suite
+    resourceVersion: "10744080"
+    uid: 80486dcd-52a9-4a66-9f7b-e00b948d2d8d
+  spec:
+    egress:
+    - to:
+      - podSelector: {}
+    - to:
+      - ipBlock:
+          cidr: 10.43.0.0/16
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    - to:
+      - ipBlock:
+          cidr: 10.43.0.0/16
+    ingress:
+    - from:
+      - podSelector: {}
+    podSelector: {}
+    policyTypes:
+    - Ingress
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-scrypted-to-relay","namespace":"suite"},"spec":{"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"scrypted"}}}],"ports":[{"port":8554,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"micro-cam-relay"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-21T19:27:41Z"
+    generation: 1
+    name: allow-scrypted-to-relay
+    namespace: suite
+    resourceVersion: "10660026"
+    uid: f48f050c-2c30-44f7-b6e3-b9988d0bda66
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: scrypted
+      ports:
+      - port: 8554
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: micro-cam-relay
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-serial2mqtt-egress-to-mosquitto","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":1883,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"suite"}},"podSelector":{"matchLabels":{"app":"mosquitto"}}}]}],"podSelector":{"matchLabels":{"app":"serial2mqtt-m3"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-23T16:05:23Z"
+    generation: 1
+    name: allow-serial2mqtt-egress-to-mosquitto
+    namespace: suite
+    resourceVersion: "11405598"
+    uid: 069746bc-cb22-4971-a1ac-9a5d7f9d95af
+  spec:
+    egress:
+    - ports:
+      - port: 1883
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: suite
+        podSelector:
+          matchLabels:
+            app: mosquitto
+    podSelector:
+      matchLabels:
+        app: serial2mqtt-m3
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-suite-to-suite-command-center-api-8000
+    namespace: suite
+    resourceVersion: "66055553"
+    uid: 59052f5a-8628-4310-a798-2cb57de92274
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: suite
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-suite-to-suite-command-center-ui
+    namespace: suite
+    resourceVersion: "66055554"
+    uid: 8b467856-7720-4861-8df0-8e5f26929302
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: suite
+      ports:
+      - port: 80
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-homebridge","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}}}],"ports":[{"port":8581,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"homebridge"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-10-16T17:48:07Z"
+    generation: 1
+    name: allow-traefik-to-homebridge
+    namespace: suite
+    resourceVersion: "21614834"
+    uid: 0386b0a9-4206-4032-812d-c7da97222c16
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+      ports:
+      - port: 8581
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: homebridge
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-magicmirror-app","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}}}],"ports":[{"port":8080,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"magicmirror-app"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-10-21T23:20:46Z"
+    generation: 3
+    name: allow-traefik-to-magicmirror-app
+    namespace: suite
+    resourceVersion: "24214168"
+    uid: e146210d-ecc0-4b4a-97b1-6588b2466cc0
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+      ports:
+      - port: 8080
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: magicmirror-app
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-relay","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}}}],"ports":[{"port":8554,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"micro-cam-relay"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-21T19:27:41Z"
+    generation: 1
+    name: allow-traefik-to-relay
+    namespace: suite
+    resourceVersion: "10660024"
+    uid: 936add1e-44d8-49ec-976b-661e9fbc4408
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+      ports:
+      - port: 8554
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: micro-cam-relay
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-scrypted","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}}}],"ports":[{"port":11080,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"scrypted"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-23T18:17:39Z"
+    generation: 1
+    name: allow-traefik-to-scrypted
+    namespace: suite
+    resourceVersion: "11442640"
+    uid: ed6ee985-2f91-420e-a0d3-5880b908d2a6
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+      ports:
+      - port: 11080
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: scrypted
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-suite-command-center-api","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}},"podSelector":{"matchLabels":{"app.kubernetes.io/name":"traefik"}}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"suite-command-center-api"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-12-23T16:58:47Z"
+    generation: 1
+    name: allow-traefik-to-suite-command-center-api
+    namespace: suite
+    resourceVersion: "56584385"
+    uid: bc598507-a59e-483e-bedb-097e701da7ab
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-traefik-to-suite-command-center-api-8000
+    namespace: suite
+    resourceVersion: "66055555"
+    uid: 7b215df9-64e6-42b6-bcb9-7d82c8973f26
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-traefik-to-suite-command-center-ui","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}},"podSelector":{"matchLabels":{"app.kubernetes.io/name":"traefik"}}}],"ports":[{"port":3000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"suite-command-center-ui"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-12-23T16:50:10Z"
+    generation: 1
+    name: allow-traefik-to-suite-command-center-ui
+    namespace: suite
+    resourceVersion: "56581108"
+    uid: 8be1adf2-a4c0-4cf3-9635-913c45692552
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 3000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-traefik-to-suite-command-center-ui-3000
+    namespace: suite
+    resourceVersion: "66055556"
+    uid: 1ce74e12-6cc6-4f1e-a9c6-cad8d5ce250b
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 3000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2026-01-08T03:17:00Z"
+    generation: 1
+    labels:
+      kustomize.toolkit.fluxcd.io/name: flux-system
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: allow-traefik-to-suite-command-center-ui-80
+    namespace: suite
+    resourceVersion: "66055557"
+    uid: 059c75a0-38ff-48b3-83a0-5dd4e0b13777
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 80
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-ui
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"api-shim-ingress","namespace":"suite"},"spec":{"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"np":"traefik"}}},{"namespaceSelector":{"matchLabels":{"np":"suite"}}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"suite-command-center-api-shim"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2026-01-01T17:44:22Z"
+    generation: 2
+    name: api-shim-ingress
+    namespace: suite
+    resourceVersion: "61939940"
+    uid: ba0f6d4f-a42e-4b34-a410-b4ad863e12ff
+  spec:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            np: traefik
+      - namespaceSelector:
+          matchLabels:
+            np: suite
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api-shim
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"cc-allow-egress-kubeapi-dns","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"ipBlock":{"cidr":"10.43.0.10/32"}}]},{"ports":[{"port":443,"protocol":"TCP"}],"to":[{"ipBlock":{"cidr":"10.43.0.1/32"}}]},{"ports":[{"port":6443,"protocol":"TCP"}],"to":[{"ipBlock":{"cidr":"192.168.50.2/32"}},{"ipBlock":{"cidr":"192.168.50.3/32"}},{"ipBlock":{"cidr":"192.168.50.6/32"}}]}],"podSelector":{"matchLabels":{"app":"suite-command-center-api"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-12-25T00:10:34Z"
+    generation: 1
+    name: cc-allow-egress-kubeapi-dns
+    namespace: suite
+    resourceVersion: "57275325"
+    uid: d2ad4727-aad2-42bd-b90f-e3ed40994cf8
+  spec:
+    egress:
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - ipBlock:
+          cidr: 10.43.0.10/32
+    - ports:
+      - port: 443
+        protocol: TCP
+      to:
+      - ipBlock:
+          cidr: 10.43.0.1/32
+    - ports:
+      - port: 6443
+        protocol: TCP
+      to:
+      - ipBlock:
+          cidr: 192.168.50.2/32
+      - ipBlock:
+          cidr: 192.168.50.3/32
+      - ipBlock:
+          cidr: 192.168.50.6/32
+    podSelector:
+      matchLabels:
+        app: suite-command-center-api
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"magicmirror-allow-egress","namespace":"suite"},"spec":{"egress":[{}],"ingress":[{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"app.kubernetes.io/name":"traefik"}}},{"podSelector":{}}],"ports":[{"port":80,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"magicmirror-app"}},"policyTypes":["Egress","Ingress"]}}
+    creationTimestamp: "2025-10-26T19:31:26Z"
+    generation: 1
+    name: magicmirror-allow-egress
+    namespace: suite
+    resourceVersion: "26528242"
+    uid: 56006ba4-3925-4785-a2c2-a9ab5e3fa105
+  spec:
+    egress:
+    - {}
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      - podSelector: {}
+      ports:
+      - port: 80
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: magicmirror-app
+    policyTypes:
+    - Egress
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"magicmirror-app-egress","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]},{"ports":[{"port":80,"protocol":"TCP"},{"port":443,"protocol":"TCP"}],"to":[{"ipBlock":{"cidr":"0.0.0.0/0","except":["10.42.0.0/16","10.43.0.0/16"]}}]}],"podSelector":{"matchLabels":{"app":"magicmirror-app"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-10-22T13:46:10Z"
+    generation: 1
+    name: magicmirror-app-egress
+    namespace: suite
+    resourceVersion: "24480029"
+    uid: a65bd22b-395b-408b-84f3-e8f324da1253
+  spec:
+    egress:
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    - ports:
+      - port: 80
+        protocol: TCP
+      - port: 443
+        protocol: TCP
+      to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+          except:
+          - 10.42.0.0/16
+          - 10.43.0.0/16
+    podSelector:
+      matchLabels:
+        app: magicmirror-app
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"magicmirror-app-ingress","namespace":"suite"},"spec":{"ingress":[{"from":[{"podSelector":{}}],"ports":[{"port":8080,"protocol":"TCP"}]},{"from":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"traefik"}},"podSelector":{"matchLabels":{"app.kubernetes.io/name":"traefik"}}}],"ports":[{"port":8080,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"magicmirror-app"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-10-22T00:58:57Z"
+    generation: 6
+    name: magicmirror-app-ingress
+    namespace: suite
+    resourceVersion: "24662211"
+    uid: 0a63a651-838f-4c77-8a0b-82d28d16859b
+  spec:
+    ingress:
+    - from:
+      - podSelector: {}
+      ports:
+      - port: 8080
+        protocol: TCP
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: traefik
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+      ports:
+      - port: 8080
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: magicmirror-app
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"mosquitto-ingress","namespace":"suite"},"spec":{"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"scrypted"}}},{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"suite"}}}],"ports":[{"port":1883,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"mosquitto"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2025-09-27T00:11:33Z"
+    generation: 1
+    name: mosquitto-ingress
+    namespace: suite
+    resourceVersion: "12749391"
+    uid: fb177a7c-5254-48e7-83a8-ffb6eebeb4fb
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: scrypted
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: suite
+      ports:
+      - port: 1883
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: mosquitto
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"scrypted-egress","namespace":"suite"},"spec":{"egress":[{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]},{"to":[{"podSelector":{}}]},{"ports":[{"port":8554,"protocol":"TCP"},{"port":1883,"protocol":"TCP"}],"to":[{"ipBlock":{"cidr":"10.43.0.0/16"}}]}],"podSelector":{"matchLabels":{"app":"scrypted"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-26T23:41:45Z"
+    generation: 2
+    name: scrypted-egress
+    namespace: suite
+    resourceVersion: "12953813"
+    uid: 3a994853-db90-4a77-a30d-8f7e9669d052
+  spec:
+    egress:
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    - to:
+      - podSelector: {}
+    - ports:
+      - port: 8554
+        protocol: TCP
+      - port: 1883
+        protocol: TCP
+      to:
+      - ipBlock:
+          cidr: 10.43.0.0/16
+    podSelector:
+      matchLabels:
+        app: scrypted
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"scrypted-egress-allow-all","namespace":"suite"},"spec":{"egress":[{}],"podSelector":{"matchLabels":{"app":"scrypted"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-27T13:14:53Z"
+    generation: 1
+    name: scrypted-egress-allow-all
+    namespace: suite
+    resourceVersion: "12966065"
+    uid: 2c42b45f-079d-468d-b9ad-d48c463144db
+  spec:
+    egress:
+    - {}
+    podSelector:
+      matchLabels:
+        app: scrypted
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"scrypted-egress-broad","namespace":"suite"},"spec":{"egress":[{"to":[{"podSelector":{}}]},{"to":[{"ipBlock":{"cidr":"10.43.0.0/16"}}]},{"ports":[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}],"to":[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]}],"podSelector":{"matchLabels":{"app":"scrypted"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2025-09-27T12:16:04Z"
+    generation: 1
+    name: scrypted-egress-broad
+    namespace: suite
+    resourceVersion: "12949688"
+    uid: 16fbcb55-1ecf-4eb1-a536-9b99342a5211
+  spec:
+    egress:
+    - to:
+      - podSelector: {}
+    - to:
+      - ipBlock:
+          cidr: 10.43.0.0/16
+    - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    podSelector:
+      matchLabels:
+        app: scrypted
+    policyTypes:
+    - Egress
+kind: List
+metadata:
+  resourceVersion: ""
