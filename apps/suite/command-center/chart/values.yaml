@@ -1,6 +1,6 @@
 ui:
   repository: 192.168.50.248:5000/suite-command-center-ui
-  tag: 11b4e70-155348
+  tag: boss1a-ba64e81-164949
  # tag: 20260109-bossmode
   env:
     NEXT_PUBLIC_UI_THEME: "boss"
@@ -8,5 +8,5 @@ ui:
     NEXT_PUBLIC_ENABLE_CARDS: "true"
 
 api:
-  repository: 192.168.50.248:5000/suite-command-center-api
-  tag: latest
+  repository: 192.168.50.248:5000/suite-command-center-ui
+  tag: boss1a-ba64e81-164949
