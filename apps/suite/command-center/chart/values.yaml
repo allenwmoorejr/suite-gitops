@@ -1,6 +1,6 @@
 ui:
   repository: registry.suite.home.arpa:5000/suite-command-center-ui
-  tag: bossfix-1003266-20260110-214732
+  tag: bossfix-abc1234-20260110-214732
  # tag: 20260109-bossmode
   env:
     NEXT_PUBLIC_UI_THEME: "boss"
