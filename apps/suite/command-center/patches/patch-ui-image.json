@@ -1,7 +1,0 @@
-[
-  {
-    "op": "replace",
-    "path": "/spec/template/spec/containers/0/image",
-    "value": "192.168.50.248:5000/suite-command-center-ui:20260109-0920"
-  }
-]

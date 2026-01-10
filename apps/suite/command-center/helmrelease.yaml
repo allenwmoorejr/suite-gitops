@@ -21,4 +21,4 @@ spec:
   values:
     ui:
       repository: registry.suite.home.arpa:5000/suite-command-center-ui
-      tag: latest
+      tag: boss1p-ba64e81-20260109-180541
