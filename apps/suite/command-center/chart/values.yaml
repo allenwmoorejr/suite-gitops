@@ -1,6 +1,6 @@
 ui:
   repository: registry.suite.home.arpa:5000/suite-command-center-ui
-  tag: bossfix-favicon-final
+  tag: bossfix-favicon-router
  # tag: 20260109-bossmode
   env:
     NEXT_PUBLIC_UI_THEME: "boss"
