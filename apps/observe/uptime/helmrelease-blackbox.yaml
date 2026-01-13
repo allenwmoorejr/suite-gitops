@@ -1,57 +1,53 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: blackbox-exporter
   namespace: observe
 spec:
-  interval: 5m
+  interval: 10m
   chart:
     spec:
       chart: prometheus-blackbox-exporter
-      version: 5.8.2
+      # Newer versions remove PodSecurityPolicy entirely
+      version: 11.7.0
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
         namespace: observe
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+      strategy: rollback
+
   values:
-    # 1) K8s >=1.25: PSP is gone, so DO NOT render it
-    pspEnabled: false
-
-    # 2) Have Prometheus Operator pick these up (kube-prometheus-stack default selector)
-    serviceMonitor:
-      enabled: true
-      labels:
-        release: kube-prometheus-stack
-      defaults:
-        interval: 30s
-        scrapeTimeout: 10s
-        module: http_2xx
-      targets:
-        - name: command-center-ui
-          url: https://command-center.allenwmoorejr.org/
-        - name: command-center-api-healthz
-          url: https://command-center.allenwmoorejr.org/healthz
-
-    # 3) Escape Prometheus templating so Helm tpl doesn't try to evaluate $labels/$value
+    # Keep PrometheusRule out of this chart (we'll create a real PrometheusRule CR instead)
     prometheusRule:
-      enabled: true
-      additionalLabels:
-        release: kube-prometheus-stack
-      rules:
-        - alert: CommandCenterEndpointDown
-          expr: probe_success{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} == 0
-          for: 2m
-          labels:
-            severity: critical
-          annotations:
-            summary: Command Center endpoint down
-            description: 'Probe failed for {{ "{{" }} $labels.instance {{ "}}" }}'
+      enabled: false
 
-        - alert: CommandCenterEndpointSlow
-          expr: probe_duration_seconds{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} > 2
-          for: 5m
+    # Create ServiceMonitors that kube-prometheus-stack will actually pick up
+    serviceMonitor:
+      selfMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+
+      enabled: true
+      defaults:
+        module: http_2xx
+        interval: 30s
+        scrapeTimeout: 30s
+        labels:
+          release: kube-prometheus-stack
+      targets:
+        - name: command-center-healthz
+          url: https://command-center.allenwmoorejr.org/healthz
           labels:
-            severity: warning
-          annotations:
-            summary: Command Center endpoint slow
-            description: '{{ "{{" }} $labels.instance {{ "}}" }} latency is {{ "{{" }} $value {{ "}}" }}s'
+            app: command-center
+        - name: command-center-root
+          url: https://command-center.allenwmoorejr.org/
+          labels:
+            app: command-center

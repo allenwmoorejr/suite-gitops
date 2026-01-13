@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: command-center-uptime
+  namespace: observe
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: command-center.uptime
+      rules:
+        - alert: CommandCenterEndpointDown
+          expr: probe_success{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Command Center endpoint down
+            description: "Probe failed for {{ $labels.instance }}"
+
+        - alert: CommandCenterEndpointSlow
+          expr: probe_duration_seconds{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: Command Center endpoint slow
+            description: "{{ $labels.instance }} latency is {{ $value }}s"
