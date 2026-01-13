@@ -1,0 +1,7 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/routes/0/match",
+    "value": "Host(`command-center.allenwmoorejr.org`) && (PathPrefix(`/v1`) || PathPrefix(`/stream`) || PathPrefix(`/healthz`) || PathPrefix(`/metrics`))"
+  }
+]

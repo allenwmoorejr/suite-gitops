@@ -22,3 +22,11 @@ resources:
   - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
   - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
   - netpol-allow-api-to-kube-apiserver.yaml
+
+patchesJson6902:
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center
+    path: patches/patch-ingressroute-command-center-healthz.json
