@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: homeassistant-webhook
+  namespace: observe
+  labels:
+    release: kube-prometheus-stack
+spec:
+  route:
+    receiver: homeassistant
+    groupBy: ["alertname", "instance"]
+    groupWait: 15s
+    groupInterval: 2m
+    repeatInterval: 30m
+    matchers:
+      - name: alertname
+        matchType: "=~"
+        value: "CommandCenter.*"
+  receivers:
+    - name: homeassistant
+      webhookConfigs:
+        - urlSecret:
+            name: alertmanager-ha-webhook
+            key: url
+          sendResolved: true
+          httpConfig:
+            followRedirects: true

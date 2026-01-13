@@ -4,3 +4,7 @@ resources:
   - namespace.yaml
   - helmrepo-prometheus-community.yaml
   - helmrelease-kube-prometheus-stack.yaml
+
+  # Alerting integration
+  - secret-alertmanager-ha-webhook.yaml
+  - alertmanagerconfig-homeassistant.yaml
