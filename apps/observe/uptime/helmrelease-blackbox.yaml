@@ -20,7 +20,6 @@ spec:
   install:
     createNamespace: true
   values:
-    # Keep modules explicit so behavior is predictable
     config:
       modules:
         http_2xx:
@@ -50,19 +49,19 @@ spec:
       enabled: true
       rules:
         - alert: CommandCenterEndpointDown
-          expr: probe_success{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} == 0
+          expr: 'probe_success{instance=~"https://command-center\.allenwmoorejr\.org.*"} == 0'
           for: 2m
           labels:
             severity: critical
           annotations:
             summary: "Command Center endpoint down"
-            description: "Probe failed for {{ $labels.instance }}"
+            description: 'Probe failed for {{ "{{ $labels.instance }}" }}'
 
         - alert: CommandCenterEndpointSlow
-          expr: probe_duration_seconds{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} > 2
+          expr: 'probe_duration_seconds{instance=~"https://command-center\.allenwmoorejr\.org.*"} > 2'
           for: 5m
           labels:
             severity: warning
           annotations:
             summary: "Command Center endpoint slow"
-            description: "{{ $labels.instance }} latency is {{ $value }}s"
+            description: '{{ "{{ $labels.instance }}" }} latency is {{ "{{ $value }}" }}s'
