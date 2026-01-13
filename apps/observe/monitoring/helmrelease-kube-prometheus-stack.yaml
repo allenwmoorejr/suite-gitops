@@ -1,0 +1,55 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: observe
+spec:
+  interval: 30m
+  timeout: 15m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: ">=80.0.0 <81.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: observe
+  install:
+    createNamespace: true
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  values:
+    # Keep it quiet on K3s (those components often aren't scrapeable like vanilla kubeadm)
+    kubeEtcd:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+
+    # Avoid a wall of default alerts until you want them
+    defaultRules:
+      create: false
+
+    grafana:
+      enabled: true
+      # change later if you want; this is just to get you in fast
+      adminPassword: "changeme-now"
+      service:
+        type: ClusterIP
+
+    alertmanager:
+      enabled: true
+
+    prometheus:
+      prometheusSpec:
+        retention: 7d
+        # IMPORTANT: allow Prometheus to pick up ServiceMonitors/Rules we create in other releases
+        # (These fields are commonly used with kube-prometheus-stack to avoid strict label matching.) :contentReference[oaicite:2]{index=2}
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false

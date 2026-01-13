@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: blackbox-exporter
+  namespace: observe
+spec:
+  interval: 15m
+  timeout: 10m
+  dependsOn:
+    - name: kube-prometheus-stack
+      namespace: observe
+  chart:
+    spec:
+      chart: prometheus-blackbox-exporter
+      version: ">=5.8.0 <6.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: observe
+  install:
+    createNamespace: true
+  values:
+    # Keep modules explicit so behavior is predictable
+    config:
+      modules:
+        http_2xx:
+          prober: http
+          timeout: 10s
+          http:
+            method: GET
+            valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+            preferred_ip_protocol: "ip4"
+
+    serviceMonitor:
+      enabled: true
+      defaults:
+        module: http_2xx
+        interval: 30s
+        scrapeTimeout: 10s
+
+    targets:
+      - name: command-center-ui
+        url: https://command-center.allenwmoorejr.org/
+      - name: command-center-api-healthz
+        url: https://command-center.allenwmoorejr.org/healthz
+      - name: command-center-api-sensors
+        url: https://command-center.allenwmoorejr.org/v1/iot/sensors
+
+    prometheusRule:
+      enabled: true
+      rules:
+        - alert: CommandCenterEndpointDown
+          expr: probe_success{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Command Center endpoint down"
+            description: "Probe failed for {{ $labels.instance }}"
+
+        - alert: CommandCenterEndpointSlow
+          expr: probe_duration_seconds{instance=~"https://command-center\\.allenwmoorejr\\.org.*"} > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Command Center endpoint slow"
+            description: "{{ $labels.instance }} latency is {{ $value }}s"
