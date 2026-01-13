@@ -6,6 +6,7 @@ resources:
 
   # Ingress + middleware
   - ingressroute-command-center.yaml
+  - ingressroute-command-center-ui.yaml
   - ingressroute-command-center-api.yaml
   - ingressroute-command-center-api-sse.yaml
   - middleware-strip-api.yaml
