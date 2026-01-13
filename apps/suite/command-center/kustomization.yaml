@@ -24,9 +24,36 @@ resources:
   - netpol-allow-api-to-kube-apiserver.yaml
 
 patchesJson6902:
+  # route /healthz + /metrics to API
   - target:
       group: traefik.io
       version: v1alpha1
       kind: IngressRoute
       name: command-center
+      namespace: suite
     path: patches/patch-ingressroute-command-center-healthz.json
+
+  # fix tls=null (must be an object)
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-tls.json
+
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center-api
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-api-tls.json
+
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center-api-sse
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-api-sse-tls.json
