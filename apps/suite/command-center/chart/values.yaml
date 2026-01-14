@@ -1,7 +1,7 @@
 ui:
   repository: registry.suite.home.arpa:5000/suite-command-center-ui
-P260114-1050
- # tag: 20260109-bossmode
+  tag: 20260114-1050
+  # tag: 20260109-bossmode
   env:
     NEXT_PUBLIC_UI_THEME: "boss"
     NEXT_PUBLIC_ENABLE_MOTION: "true"
@@ -9,4 +9,4 @@ P260114-1050
 
 api:
   repository: 192.168.50.248:5000/suite-command-center-api
-P260114-1050
+  tag: boss1a-ba64e81-164949
