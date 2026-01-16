@@ -1,0 +1,6 @@
+.venv-ansible/
+ops/ansible/artifacts/
+*.retry
+./.venv-ansible/
+ops/ansible/artifacts/
+*.retry
