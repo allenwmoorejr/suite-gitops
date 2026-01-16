@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ../../../../apps/observe/monitoring
   - ../../../../apps/observe/uptime
+  - ../../../../apps/observe/grafana-ingress.yaml
