@@ -18,3 +18,11 @@ serviceAccount:
 serviceAccount:
   create: true
   name: ""
+
+api:
+  service:
+    port: 80
+
+ui:
+  service:
+    port: 80
