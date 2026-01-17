@@ -1,0 +1,6 @@
+apiVersion: v2
+name: suite-command-center
+description: Suite Command Center (API + UI)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

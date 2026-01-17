@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suite-command-center-ui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: suite-command-center-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suite-command-center-ui
+  template:
+    metadata:
+      labels:
+        app: suite-command-center-ui
+    spec:
+      containers:
+        - name: ui
+          image: "{{ .Values.ui.repository }}:{{ .Values.ui.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+{{- if .Values.ui.env }}
+{{- range $k, $v := .Values.ui.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,17 @@
+api:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-api
+    tag: 20260114-1050
+    pullPolicy: IfNotPresent
+  service:
+    port: 80
+    targetPort: 8000
+
+ui:
+  image:
+    repository: registry.suite.home.arpa:5000/suite-command-center-ui
+    tag: 20260114-1050
+    pullPolicy: IfNotPresent
+  service:
+    port: 80
+    targetPort: 3000

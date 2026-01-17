@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: command-center-ui
+  namespace: suite
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      # UI gets everything EXCEPT the API/SSE/health paths
+      match: Host(`command-center.allenwmoorejr.org`) && !PathPrefix(`/v1`) && !PathPrefix(`/stream`) && !PathPrefix(`/healthz`) && !PathPrefix(`/metrics`)
+      services:
+        - name: suite-command-center-ui
+          port: 80
+  tls:
+    secretName: command-center-tls

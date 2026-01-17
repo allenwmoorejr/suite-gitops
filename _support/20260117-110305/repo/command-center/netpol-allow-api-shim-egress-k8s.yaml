@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-shim-egress-k8s
+  namespace: suite
+spec:
+  podSelector:
+    matchLabels:
+      app: suite-command-center-api-shim
+  policyTypes: ["Egress"]
+  egress:
+    # DNS -> CoreDNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+
+    # kube-apiserver (allow service IP + endpoints IPs; ports cover 443 and 6443)
+    - to:
+        - ipBlock: { cidr: 10.43.0.1/32 }
+        - ipBlock: { cidr: 192.168.50.2/32 }
+        - ipBlock: { cidr: 192.168.50.3/32 }
+        - ipBlock: { cidr: 192.168.50.6/32 }
+      ports:
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 6443 }

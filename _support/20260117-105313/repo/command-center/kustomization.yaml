@@ -1,0 +1,63 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - helmrelease.yaml
+
+  # Ingress + middleware
+  - ingressroute-command-center.yaml
+  - ingressroute-command-center-ui.yaml
+  - ingressroute-command-center-api.yaml
+  - ingressroute-command-center-api-sse.yaml
+  - middleware-strip-api.yaml
+  - middleware-strip-v1.yaml
+  - mw-command-center-http11.yaml
+  - mw-command-center-sse.yaml
+
+  # Netpols
+  - netpol-allow-all-to-suite-command-center-ui-80.yaml
+  - netpol-allow-all-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-suite-to-suite-command-center-api-8000.yaml
+  - netpol-allow-suite-to-suite-command-center-ui.yaml
+  - netpol-allow-traefik-to-suite-command-center-api-8000.yaml
+  - netpol-allow-traefik-to-suite-command-center-ui-3000.yaml
+  - netpol-allow-traefik-to-suite-command-center-ui-80.yaml
+  - netpol-allow-api-to-kube-apiserver.yaml
+
+patchesJson6902:
+  # route /healthz + /metrics to API
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-healthz.json
+
+  # fix tls=null (must be an object)
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-tls.json
+
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center-api
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-api-tls.json
+
+  - target:
+      group: traefik.io
+      version: v1alpha1
+      kind: IngressRoute
+      name: command-center-api-sse
+      namespace: suite
+    path: patches/patch-ingressroute-command-center-api-sse-tls.json
+
+patchesStrategicMerge:
+  - patches/patch-helmrelease-values.yaml

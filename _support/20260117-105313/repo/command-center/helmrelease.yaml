@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: suite-command-center
+  namespace: suite
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./apps/suite/command-center/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    ui:
+      repository: registry.suite.home.arpa:5000/suite-command-center-ui
+      tag: 20260114-1050

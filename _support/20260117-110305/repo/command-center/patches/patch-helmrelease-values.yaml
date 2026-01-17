@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: suite-command-center
+  namespace: suite
+spec:
+  values:
+    api:
+      image:
+        repository: registry.suite.home.arpa:5000/suite-command-center-api
+        tag: 20260114-1050
+      service:
+        port: 80
+        targetPort: 8000
+
+    ui:
+      image:
+        repository: registry.suite.home.arpa:5000/suite-command-center-ui
+        tag: 20260114-1050
+      service:
+        port: 80
+        targetPort: 3000

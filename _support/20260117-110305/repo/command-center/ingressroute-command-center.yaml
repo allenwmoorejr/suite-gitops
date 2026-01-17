@@ -1,0 +1,24 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: command-center
+  namespace: suite
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`) && (PathPrefix(`/v1`) || PathPrefix(`/stream`))
+      middlewares:
+        - name: command-center-http11
+        - name: command-center-sse
+      services:
+        - name: suite-command-center-api
+          port: 80
+
+    - kind: Rule
+      match: Host(`command-center.suite.home.arpa`)
+      services:
+        - name: suite-command-center-ui
+          port: 80
+  tls: {}

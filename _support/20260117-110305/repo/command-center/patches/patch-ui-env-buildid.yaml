@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suite-command-center-ui
+  namespace: suite
+spec:
+  template:
+    spec:
+      containers:
+        - name: ui
+          env:
+            - name: NEXT_PUBLIC_BUILD_ID
+              value: "$(date +%Y%m%d-%H%M%S)"

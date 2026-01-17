@@ -1,0 +1,172 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: suite-command-center-api-shim
+  namespace: suite
+data:
+  server.py: |
+    import json, os, ssl, time
+    import urllib.request, urllib.error
+    import time
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from urllib.parse import urlparse, parse_qs
+    
+    K8S_BASE = os.environ.get("K8S_BASE", "https://kubernetes.default.svc")
+    TOKEN_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    CA_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    PORT = int(os.environ.get("PORT", "8000"))
+    NAME = os.environ.get("APP_NAME", "suite-command-center-api-shim")
+    
+    def _read(path: str) -> str:
+      with open(path, "r", encoding="utf-8") as f:
+        return f.read().strip()
+    
+    def k8s_get_json(path_with_query: str, timeout: int = 10):
+      token = _read(TOKEN_PATH)
+      ctx = ssl.create_default_context(cafile=CA_PATH)
+      url = K8S_BASE.rstrip("/") + path_with_query
+      req = urllib.request.Request(
+        url,
+        headers={"Authorization": f"Bearer {token}", "Accept":"application/json", "User-Agent": NAME},
+        method="GET",
+      )
+      try:
+        with urllib.request.urlopen(req, context=ctx, timeout=timeout) as resp:
+          body = resp.read().decode("utf-8", errors="replace")
+          return resp.status, json.loads(body)
+      except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace") if hasattr(e, "read") else ""
+        try:
+          return e.code, json.loads(body) if body else {"error": str(e)}
+        except Exception:
+          return e.code, {"error": str(e), "body": body[:2000]}
+      except Exception as e:
+        return 500, {"error": str(e)}
+    
+    def summarize_nodes(nodes_obj):
+      items = nodes_obj.get("items", []) or []
+      total = len(items)
+      ready = 0
+      for n in items:
+        for c in (n.get("status", {}) or {}).get("conditions", []) or []:
+          if c.get("type") == "Ready" and c.get("status") == "True":
+            ready += 1
+            break
+      return {"total": total, "ready": ready}
+    
+    def summarize_pods(pods_obj):
+      items = pods_obj.get("items", []) or []
+      total = len(items)
+      running = 0
+      for p in items:
+        if (p.get("status", {}) or {}).get("phase") == "Running":
+          running += 1
+      return {"total": total, "running": running}
+    
+    def summarize_workloads(dep_obj, ds_obj, sts_obj):
+      return {
+        "deployments": len(dep_obj.get("items", []) or []),
+        "daemonsets": len(ds_obj.get("items", []) or []),
+        "statefulsets": len(sts_obj.get("items", []) or []),
+      }
+    
+    class H(BaseHTTPRequestHandler):
+      def _send(self, code: int, payload: dict):
+        b = json.dumps(payload).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(b)))
+        self.end_headers()
+        self.wfile.write(b)
+    
+      def log_message(self, fmt, *args):
+        print("%s - - [%s] %s" % (self.client_address[0], self.log_date_time_string(), fmt % args))
+    
+      def do_GET(self):
+        u = urlparse(self.path)
+        path = u.path
+        q = parse_qs(u.query)
+    
+        # Traefik strips /api -> we serve /healthz /summary /nodes /pods /workloads /events
+        if path == "/healthz":
+          return self._send(200, {"ok": True, "name": NAME, "ts": int(time.time())})
+    
+        if path in ("/summary", "/v1/summary", "/cluster/summary"):
+          n_code, nodes = k8s_get_json("/api/v1/nodes")
+          p_code, pods  = k8s_get_json("/api/v1/pods")
+          d_code, deps  = k8s_get_json("/apis/apps/v1/deployments")
+          ds_code, dss  = k8s_get_json("/apis/apps/v1/daemonsets")
+          s_code, stss  = k8s_get_json("/apis/apps/v1/statefulsets")
+          if max(n_code, p_code, d_code, ds_code, s_code) >= 400:
+            return self._send(502, {"error":"upstream k8s API error","codes":{
+              "nodes": n_code, "pods": p_code, "deployments": d_code, "daemonsets": ds_code, "statefulsets": s_code
+            }})
+          return self._send(200, {
+            "nodes": summarize_nodes(nodes),
+            "pods": summarize_pods(pods),
+            "workloads": summarize_workloads(deps, dss, stss),
+            "ts": int(time.time()),
+          })
+    
+        if path in ("/nodes", "/v1/nodes", "/cluster/nodes"):
+          code, obj = k8s_get_json("/api/v1/nodes")
+          return self._send(code, obj)
+    
+        if path in ("/pods", "/v1/pods", "/cluster/pods"):
+          ns = (q.get("namespace") or [None])[0]
+          code, obj = k8s_get_json(f"/api/v1/namespaces/{ns}/pods" if ns else "/api/v1/pods")
+          return self._send(code, obj)
+    
+        if path in ("/events", "/v1/events", "/cluster/events"):
+          code, obj = k8s_get_json("/api/v1/events?limit=200")
+          return self._send(code, obj)
+    
+        if path in ("/workloads", "/v1/workloads", "/cluster/workloads"):
+          d_code, deps  = k8s_get_json("/apis/apps/v1/deployments")
+          ds_code, dss  = k8s_get_json("/apis/apps/v1/daemonsets")
+          s_code, stss  = k8s_get_json("/apis/apps/v1/statefulsets")
+          code = max(d_code, ds_code, s_code)
+          return self._send(code if code >= 400 else 200, {
+            "deployments": deps, "daemonsets": dss, "statefulsets": stss, "ts": int(time.time())
+          })
+    
+        if path in ("/sensors", "/iot/sensors"):
+    
+            return self._send(200, {"topics": [], "ts": int(time.time())})
+    
+    
+        if path in ("/stream", "/events/stream"):
+    
+            self.send_response(200)
+    
+            self.send_header("Content-Type", "text/event-stream")
+    
+            self.send_header("Cache-Control", "no-cache")
+    
+            self.send_header("Connection", "keep-alive")
+    
+            self.end_headers()
+    
+            try:
+    
+                for i in range(12):
+    
+                    payload = json.dumps({"type":"ping","ts":int(time.time()),"i":i})
+    
+                    self.wfile.write(f"data: {payload}\n\n".encode("utf-8"))
+    
+                    self.wfile.flush()
+    
+                    time.sleep(5)
+    
+            except (BrokenPipeError, ConnectionResetError):
+    
+                return
+    
+            return
+    
+    
+        return self._send(404, {"error":"not found","path":path,"hint":"try /healthz /summary /nodes /pods /workloads /events"})
+    
+    print(f"{NAME}: starting on 0.0.0.0:{PORT}")
+    HTTPServer(("0.0.0.0", PORT), H).serve_forever()

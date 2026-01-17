@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: command-center-external-ui
+  namespace: suite
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`command-center.allenwmoorejr.org`) && PathPrefix(`/`)
+      priority: 10
+      services:
+        - name: suite-command-center-ui
+          port: 80
+  tls:
+    secretName: command-center-tls

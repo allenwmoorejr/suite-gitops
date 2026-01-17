@@ -1,0 +1,12 @@
+ui:
+  repository: registry.suite.home.arpa:5000/suite-command-center-ui
+  tag: boss1p-ba64e81-20260109-180541
+  # tag: 20260109-bossmode
+  env:
+    NEXT_PUBLIC_UI_THEME: "boss"
+    NEXT_PUBLIC_ENABLE_MOTION: "true"
+    NEXT_PUBLIC_ENABLE_CARDS: "true"
+
+api:
+  repository: 192.168.50.248:5000/suite-command-center-api
+  tag: boss1p-ba64e81-20260109-180541

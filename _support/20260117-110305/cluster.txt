@@ -1,0 +1,276 @@
+### kubectl version
+
+### nodes
+NAME   STATUS                     ROLES                       AGE    VERSION        INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION         CONTAINER-RUNTIME
+m1     Ready                      control-plane,etcd,master   149d   v1.33.3+k3s1   192.168.50.2     <none>        Ubuntu 25.04                     6.14.0-1019-raspi      containerd://2.0.5-k3s2
+m2     Ready                      control-plane,etcd,master   149d   v1.33.1+k3s1   192.168.50.6     <none>        Ubuntu 24.04.3 LTS               6.8.0-1043-raspi       containerd://2.0.5-k3s1
+m3     Ready                      control-plane,etcd,master   102d   v1.33.5+k3s1   192.168.50.3     <none>        Ubuntu 24.04.3 LTS               6.8.0-1043-raspi       containerd://2.1.4-k3s1
+w0     Ready                      <none>                      140d   v1.33.4+k3s1   192.168.50.9     <none>        Ubuntu 24.04.3 LTS               6.8.0-1043-raspi       containerd://2.0.5-k3s2
+w2     Ready,SchedulingDisabled   <none>                      140d   v1.33.1+k3s1   192.168.50.4     <none>        Debian GNU/Linux 12 (bookworm)   6.12.47+rpt-rpi-v8     containerd://2.0.5-k3s1
+w7     Ready                      <none>                      25d    v1.33.6+k3s1   192.168.50.126   <none>        Debian GNU/Linux 12 (bookworm)   6.12.47+rpt-rpi-2712   containerd://2.1.5-k3s1.33
+
+### flux objects
+NAME                                                 URL                                                   AGE   READY   STATUS
+gitrepository.source.toolkit.fluxcd.io/flux-system   ssh://git@github.com/allenwmoorejr/suite-gitops.git   14h   True    stored artifact for revision 'main@sha1:dc2706c17aeb5e37aa03426f10bf47f233f5357f'
+
+NAME                                                    AGE   READY   STATUS
+kustomization.kustomize.toolkit.fluxcd.io/flux-system   14h   True    Applied revision: main@sha1:dc2706c17aeb5e37aa03426f10bf47f233f5357f
+
+### suite command-center objects (wide)
+NAME                                                      AGE   READY   STATUS
+helmrelease.helm.toolkit.fluxcd.io/suite-command-center   13h   False   Helm install failed for release suite/suite-command-center with chart suite-command-center@0.1.0: error while running post render on files: may not add resource with an already registered id: Deployment.v1.apps/suite-command-center-ui.suite
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS    IMAGES                                             SELECTOR
+deployment.apps/clm                  0/1     1            0           105d   clm-clean     allenwayne/clm                                     app=clm
+deployment.apps/homebridge           1/1     1            1           127d   homebridge    homebridge/homebridge:latest                       app=homebridge
+deployment.apps/jenkins              1/1     1            1           76d    jenkins       jenkins/jenkins:lts-jdk17                          app=jenkins
+deployment.apps/magicmirror-app      1/1     1            1           80d    magicmirror   docker.io/bastilimbach/docker-magicmirror:latest   app=magicmirror-app
+deployment.apps/magicmirror-server   1/1     1            1           70d    magicmirror   docker.io/allenwayne/magicmirror-server:2.32       app=magicmirror-server
+deployment.apps/pihole               1/1     1            1           127d   pihole        pihole/pihole:latest                               app=pihole
+deployment.apps/scrypted             1/1     1            1           14d    scrypted      koush/scrypted:latest                              app=scrypted
+
+NAME                                         READY   STATUS             RESTARTS           AGE    IP             NODE   NOMINATED NODE   READINESS GATES
+pod/clm-58888847cd-8kg4d                     0/1     CrashLoopBackOff   9567 (4m45s ago)   33d    10.42.4.157    w2     <none>           <none>
+pod/curl                                     0/1     CrashLoopBackOff   3924 (105s ago)    10d    10.42.5.116    w7     <none>           <none>
+pod/homebridge-7b5b8cdf94-89lrx              1/1     Running            0                  15d    192.168.50.9   w0     <none>           <none>
+pod/homebridge-backup-prune-29474520-c6hhh   0/1     Completed          0                  2d7h   <none>         w7     <none>           <none>
+pod/homebridge-backup-prune-29475960-jchpx   0/1     Completed          0                  31h    10.42.0.65     m2     <none>           <none>
+pod/homebridge-backup-prune-29477400-5rrp9   0/1     Completed          0                  7h3m   10.42.0.69     m2     <none>           <none>
+pod/jenkins-7b56fbb79c-w6f57                 1/1     Running            0                  12d    10.42.1.215    m3     <none>           <none>
+pod/magicmirror-app-79d76f44c-zhll8          1/1     Running            0                  42h    10.42.3.162    w0     <none>           <none>
+pod/magicmirror-server-5c8f999799-swlbr      1/1     Running            2 (15d ago)        33d    10.42.1.198    m3     <none>           <none>
+pod/pihole-8545f7c6d9-cchcm                  1/1     Running            0                  42h    10.42.0.54     m2     <none>           <none>
+pod/scrypted-7895976575-j49hl                1/1     Running            2 (42h ago)        13d    192.168.50.6   m2     <none>           <none>
+
+NAME                                    TYPE           CLUSTER-IP      EXTERNAL-IP                 PORT(S)                                        AGE    SELECTOR
+service/camera-esp32-relay-public       LoadBalancer   10.43.249.89    192.168.50.3,192.168.50.9   8554:32575/TCP,8888:30425/TCP,8889:31640/TCP   120d   app=camera-esp32-relay
+service/clm                             LoadBalancer   10.43.93.181    192.168.50.241              3000:30968/TCP                                 49d    app=clm
+service/homebridge                      ClusterIP      10.43.54.215    <none>                      8581/TCP,51443/TCP                             127d   app=homebridge
+service/jenkins                         ClusterIP      10.43.166.247   <none>                      8080/TCP,50000/TCP                             76d    app=jenkins
+service/magicmirror-hostport            ClusterIP      10.43.30.137    <none>                      80/TCP                                         106d   app=magicmirror-app
+service/magicmirror-server              ClusterIP      10.43.191.110   <none>                      8080/TCP                                       107d   app=magicmirror-server
+service/mosquitto                       ClusterIP      10.43.34.37     <none>                      1883/TCP                                       127d   app=mosquitto
+service/mosquitto-headless              ClusterIP      None            <none>                      1883/TCP                                       112d   app=mosquitto
+service/pihole                          LoadBalancer   10.43.157.234   192.168.50.245              53:31173/UDP,53:32643/TCP,80:31961/TCP         127d   app=pihole
+service/scrypted                        ClusterIP      10.43.226.44    <none>                      11080/TCP                                      57m    app=scrypted
+service/spotify-callback                ClusterIP      10.43.50.117    <none>                      8080/TCP                                       89d    app=spotify-callback
+service/suite-command-center-api        ClusterIP      10.43.145.9     <none>                      80/TCP                                         111m   app=suite-command-center-api
+service/suite-command-center-api-shim   ClusterIP      10.43.52.22     <none>                      80/TCP                                         111m   app=suite-command-center-api
+service/suite-command-center-ui         ClusterIP      10.43.29.46     <none>                      80/TCP                                         111m   app=suite-command-center-ui
+service/zigbee2mqtt                     ClusterIP      10.43.62.97     <none>                      8081/TCP                                       127d   app=zigbee2mqtt
+
+NAME                                                                 ADDRESSTYPE   PORTS        ENDPOINTS      AGE
+endpointslice.discovery.k8s.io/camera-esp32-relay-public-5tdvx       IPv4          <unset>      <unset>        120d
+endpointslice.discovery.k8s.io/clm-wqrcs                             IPv4          3000         10.42.4.157    49d
+endpointslice.discovery.k8s.io/homebridge-tm5dj                      IPv4          8581,51443   192.168.50.9   58d
+endpointslice.discovery.k8s.io/jenkins-99m9n                         IPv4          8080,50000   10.42.1.215    76d
+endpointslice.discovery.k8s.io/magicmirror-hostport-xqc4b            IPv4          8080         10.42.3.162    106d
+endpointslice.discovery.k8s.io/magicmirror-server-shc5b              IPv4          8080         10.42.1.198    107d
+endpointslice.discovery.k8s.io/mosquitto-59d7z                       IPv4          <unset>      <unset>        127d
+endpointslice.discovery.k8s.io/mosquitto-headless-zznzg              IPv4          <unset>      <unset>        112d
+endpointslice.discovery.k8s.io/pihole-8smt7                          IPv4          80,53,53     10.42.0.54     127d
+endpointslice.discovery.k8s.io/scrypted-vzl8t                        IPv4          11080        192.168.50.6   57m
+endpointslice.discovery.k8s.io/spotify-callback-jdx7x                IPv4          <unset>      <unset>        89d
+endpointslice.discovery.k8s.io/suite-command-center-api-shim-9wv72   IPv4          <unset>      <unset>        111m
+endpointslice.discovery.k8s.io/suite-command-center-api-wx4s4        IPv4          <unset>      <unset>        111m
+endpointslice.discovery.k8s.io/suite-command-center-ui-wx8hh         IPv4          <unset>      <unset>        111m
+endpointslice.discovery.k8s.io/zigbee2mqtt-68qmt                     IPv4          <unset>      <unset>        127d
+
+NAME                                                                             POD-SELECTOR                        AGE
+networkpolicy.networking.k8s.io/allow-all-to-homebridge                          app=homebridge                      63d
+networkpolicy.networking.k8s.io/allow-all-to-pihole                              app=pihole                          63d
+networkpolicy.networking.k8s.io/allow-all-to-suite-command-center-ui-3000        app=suite-command-center-ui         13h
+networkpolicy.networking.k8s.io/allow-all-to-suite-command-center-ui-80          app=suite-command-center-ui         13h
+networkpolicy.networking.k8s.io/allow-command-center-api-to-kube-apiserver       app=suite-command-center-api        13h
+networkpolicy.networking.k8s.io/allow-egress-internet                            allow-egress=internet               117d
+networkpolicy.networking.k8s.io/allow-ingress-to-command-center-api              app=suite-command-center-api        24d
+networkpolicy.networking.k8s.io/allow-mediamtx-ingress                           app=mediamtx                        112d
+networkpolicy.networking.k8s.io/allow-namespace-to-uploader                      app=camera-uploader                 118d
+networkpolicy.networking.k8s.io/allow-relay-egress-to-uploader                   app=micro-cam-relay                 115d
+networkpolicy.networking.k8s.io/allow-same-namespace-and-dns                     <none>                              117d
+networkpolicy.networking.k8s.io/allow-scrypted-to-relay                          app=micro-cam-relay                 117d
+networkpolicy.networking.k8s.io/allow-serial2mqtt-egress-to-mosquitto            app=serial2mqtt-m3                  116d
+networkpolicy.networking.k8s.io/allow-suite-to-suite-command-center-api-8000     app=suite-command-center-api        13h
+networkpolicy.networking.k8s.io/allow-suite-to-suite-command-center-ui           app=suite-command-center-ui         13h
+networkpolicy.networking.k8s.io/allow-traefik-to-homebridge                      app=homebridge                      92d
+networkpolicy.networking.k8s.io/allow-traefik-to-magicmirror-app                 app=magicmirror-app                 87d
+networkpolicy.networking.k8s.io/allow-traefik-to-relay                           app=micro-cam-relay                 117d
+networkpolicy.networking.k8s.io/allow-traefik-to-scrypted                        app=scrypted                        115d
+networkpolicy.networking.k8s.io/allow-traefik-to-suite-command-center-api        app=suite-command-center-api        25d
+networkpolicy.networking.k8s.io/allow-traefik-to-suite-command-center-api-8000   app=suite-command-center-api        13h
+networkpolicy.networking.k8s.io/allow-traefik-to-suite-command-center-ui         app=suite-command-center-ui         25d
+networkpolicy.networking.k8s.io/allow-traefik-to-suite-command-center-ui-3000    app=suite-command-center-ui         13h
+networkpolicy.networking.k8s.io/allow-traefik-to-suite-command-center-ui-80      app=suite-command-center-ui         13h
+networkpolicy.networking.k8s.io/api-shim-ingress                                 app=suite-command-center-api-shim   15d
+networkpolicy.networking.k8s.io/cc-allow-egress-kubeapi-dns                      app=suite-command-center-api        23d
+networkpolicy.networking.k8s.io/magicmirror-allow-egress                         app=magicmirror-app                 82d
+networkpolicy.networking.k8s.io/magicmirror-app-egress                           app=magicmirror-app                 87d
+networkpolicy.networking.k8s.io/magicmirror-app-ingress                          app=magicmirror-app                 87d
+networkpolicy.networking.k8s.io/mosquitto-ingress                                app=mosquitto                       112d
+networkpolicy.networking.k8s.io/scrypted-egress                                  app=scrypted                        112d
+networkpolicy.networking.k8s.io/scrypted-egress-allow-all                        app=scrypted                        112d
+networkpolicy.networking.k8s.io/scrypted-egress-broad                            app=scrypted                        112d
+
+NAME                                                  AGE
+ingressroute.traefik.io/command-center                13h
+ingressroute.traefik.io/command-center-api            13h
+ingressroute.traefik.io/command-center-api-sse        13h
+ingressroute.traefik.io/command-center-external-api   157m
+ingressroute.traefik.io/command-center-external-ui    157m
+ingressroute.traefik.io/command-center-ui             150m
+
+NAME                                             AGE
+middleware.traefik.io/allow-lan                  98d
+middleware.traefik.io/api-rewrite                21d
+middleware.traefik.io/command-center-http11      13h
+middleware.traefik.io/command-center-sse         13h
+middleware.traefik.io/command-center-strip-api   16d
+middleware.traefik.io/command-center-strip-v1    13h
+middleware.traefik.io/compress                   98d
+middleware.traefik.io/pihole-admin-redirect      92d
+middleware.traefik.io/pihole-admin-slash         92d
+middleware.traefik.io/redirect-https             98d
+middleware.traefik.io/security-headers           98d
+middleware.traefik.io/strip-api                  13h
+middleware.traefik.io/trim-trailing-semicolon    21d
+
+### helmrelease describe
+Name:         suite-command-center
+Namespace:    suite
+Labels:       kustomize.toolkit.fluxcd.io/name=flux-system
+              kustomize.toolkit.fluxcd.io/namespace=flux-system
+Annotations:  reconcile.fluxcd.io/requestedAt: 2026-01-17T09:24:13.644983865-06:00
+API Version:  helm.toolkit.fluxcd.io/v2
+Kind:         HelmRelease
+Metadata:
+  Creation Timestamp:  2026-01-17T03:59:57Z
+  Finalizers:
+    finalizers.fluxcd.io
+  Generation:        2
+  Resource Version:  72292963
+  UID:               1856eb3b-da51-4a06-9fd2-2fd48aa2779a
+Spec:
+  Chart:
+    Spec:
+      Chart:               ./apps/suite/command-center/chart
+      Reconcile Strategy:  ChartVersion
+      Source Ref:
+        Kind:       GitRepository
+        Name:       flux-system
+        Namespace:  flux-system
+      Version:      *
+  Install:
+    Remediation:
+      Retries:  3
+  Interval:     5m
+  Upgrade:
+    Remediation:
+      Retries:  3
+  Values:
+    API:
+      Image:
+        Repository:  registry.suite.home.arpa:5000/suite-command-center-api
+        Tag:         20260114-1050
+      Service:
+        Port:         80
+        Target Port:  8000
+    Ui:
+      Image:
+        Repository:  registry.suite.home.arpa:5000/suite-command-center-ui
+        Tag:         20260114-1050
+      Repository:    registry.suite.home.arpa:5000/suite-command-center-ui
+      Service:
+        Port:         80
+        Target Port:  3000
+      Tag:            20260114-1050
+Status:
+  Conditions:
+    Last Transition Time:                  2026-01-17T16:55:48Z
+    Message:                               Running 'install' action with timeout of 5m0s
+    Observed Generation:                   2
+    Reason:                                Progressing
+    Status:                                True
+    Type:                                  Reconciling
+    Last Transition Time:                  2026-01-17T16:55:48Z
+    Message:                               Helm install failed for release suite/suite-command-center with chart suite-command-center@0.1.0: error while running post render on files: may not add resource with an already registered id: Deployment.v1.apps/suite-command-center-ui.suite
+    Observed Generation:                   2
+    Reason:                                InstallFailed
+    Status:                                False
+    Type:                                  Ready
+    Last Transition Time:                  2026-01-17T15:24:14Z
+    Message:                               Helm install failed for release suite/suite-command-center with chart suite-command-center@0.1.0: error while running post render on files: may not add resource with an already registered id: Deployment.v1.apps/suite-command-center-ui.suite
+    Observed Generation:                   2
+    Reason:                                InstallFailed
+    Status:                                False
+    Type:                                  Released
+  Failures:                                8
+  Helm Chart:                              flux-system/suite-suite-command-center
+  Last Attempted Config Digest:            sha256:b7b4018fdb0f575d7b83f207a25ad5271baf6a689b8cca9951c669cc0ae186d9
+  Last Attempted Generation:               2
+  Last Attempted Release Action:           install
+  Last Attempted Release Action Duration:  88.763775ms
+  Last Attempted Revision:                 0.1.0
+  Last Handled Reconcile At:               2026-01-17T09:24:13.644983865-06:00
+  Observed Generation:                     -1
+  Storage Namespace:                       suite
+Events:
+  Type     Reason         Age                  From             Message
+  ----     ------         ----                 ----             -------
+  Warning  InstallFailed  7m18s (x8 over 98m)  helm-controller  Helm install failed for release suite/suite-command-center with chart suite-command-center@0.1.0: error while running post render on files: may not add resource with an already registered id: Deployment.v1.apps/suite-command-center-ui.suite
+
+### suite events
+LAST SEEN   TYPE      REASON          OBJECT                                     MESSAGE
+4m46s       Normal    Pulling         pod/clm-58888847cd-8kg4d                   Pulling image "allenwayne/clm"
+4m6s        Warning   BackOff         pod/clm-58888847cd-8kg4d                   Back-off restarting failed container clm-clean in pod clm-58888847cd-8kg4d_suite(7a4d87ac-203b-44c3-ba83-b89ff113496f)
+7m18s       Warning   InstallFailed   helmrelease/suite-command-center           Helm install failed for release suite/suite-command-center with chart suite-command-center@0.1.0: error while running post render on files: may not add resource with an already registered id: Deployment.v1.apps/suite-command-center-ui.suite
+30m         Normal    nodeAssigned    service/clm                                announcing from node "m2"
+57m         Normal    Pulling         pod/curl                                   Pulling image "curlimages/curl"
+57m         Normal    Created         pod/curl                                   Created container: curl
+57m         Warning   BackOff         pod/curl                                   Back-off restarting failed container curl in pod curl_suite(15b81a39-da21-4e08-bcb3-1ce71fc4263c)
+57m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 298ms (298ms including waiting). Image size: 11043318 bytes.
+41m         Normal    Pulling         pod/curl                                   Pulling image "curlimages/curl"
+52m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 307ms (307ms including waiting). Image size: 11043318 bytes.
+41m         Normal    Created         pod/curl                                   Created container: curl
+46m         Normal    Started         pod/curl                                   Started container curl
+42m         Warning   BackOff         pod/curl                                   Back-off restarting failed container curl in pod curl_suite(15b81a39-da21-4e08-bcb3-1ce71fc4263c)
+52m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 295ms (295ms including waiting). Image size: 11043318 bytes.
+52m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 296ms (296ms including waiting). Image size: 11043318 bytes.
+51m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 329ms (329ms including waiting). Image size: 11043318 bytes.
+50m         Warning   FailedCreate    cronjob/homebridge-backup-config-nightly   Error creating job: Job.batch "homebridge-backup-config-nightly-29477340" is invalid: spec.template.metadata.labels[job-name]: Invalid value: map[string]string{"batch.kubernetes.io/controller-uid":"d29d0e01-33a1-4df5-9a46-dda1027747c1", "batch.kubernetes.io/job-name":"homebridge-backup-config-nightly-29477340", "controller-uid":"d29d0e01-33a1-4df5-9a46-dda1027747c1", "job-name":"homebridge-backup-config-nightly"}: must be 'homebridge-backup-config-nightly-29477340'
+49m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 320ms (320ms including waiting). Image size: 11043318 bytes.
+46m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 303ms (303ms including waiting). Image size: 11043318 bytes.
+41m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 287ms (287ms including waiting). Image size: 11043318 bytes.
+26m         Normal    Pulling         pod/curl                                   Pulling image "curlimages/curl"
+37m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 299ms (299ms including waiting). Image size: 11043318 bytes.
+26m         Normal    Created         pod/curl                                   Created container: curl
+32m         Normal    Started         pod/curl                                   Started container curl
+27m         Warning   BackOff         pod/curl                                   Back-off restarting failed container curl in pod curl_suite(15b81a39-da21-4e08-bcb3-1ce71fc4263c)
+37m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 296ms (296ms including waiting). Image size: 11043318 bytes.
+37m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 297ms (297ms including waiting). Image size: 11043318 bytes.
+36m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 289ms (289ms including waiting). Image size: 11043318 bytes.
+34m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 300ms (300ms including waiting). Image size: 11043318 bytes.
+33m         Warning   FailedCreate    cronjob/homebridge-backup-config-nightly   Error creating job: Job.batch "homebridge-backup-config-nightly-29477340" is invalid: spec.template.metadata.labels[job-name]: Invalid value: map[string]string{"batch.kubernetes.io/controller-uid":"8a7daf47-0e46-468f-ab64-4e20e51bf8c5", "batch.kubernetes.io/job-name":"homebridge-backup-config-nightly-29477340", "controller-uid":"8a7daf47-0e46-468f-ab64-4e20e51bf8c5", "job-name":"homebridge-backup-config-nightly"}: must be 'homebridge-backup-config-nightly-29477340'
+32m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 315ms (315ms including waiting). Image size: 11043318 bytes.
+26m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 303ms (303ms including waiting). Image size: 11043318 bytes.
+11m         Normal    Pulling         pod/curl                                   Pulling image "curlimages/curl"
+19m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 306ms (306ms including waiting). Image size: 11043318 bytes.
+11m         Normal    Created         pod/curl                                   Created container: curl
+16m         Normal    Started         pod/curl                                   Started container curl
+12m         Warning   BackOff         pod/curl                                   Back-off restarting failed container curl in pod curl_suite(15b81a39-da21-4e08-bcb3-1ce71fc4263c)
+22m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 303ms (303ms including waiting). Image size: 11043318 bytes.
+21m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 325ms (325ms including waiting). Image size: 11043318 bytes.
+21m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 295ms (295ms including waiting). Image size: 11043318 bytes.
+16m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 311ms (311ms including waiting). Image size: 11043318 bytes.
+16m         Warning   FailedCreate    cronjob/homebridge-backup-config-nightly   Error creating job: Job.batch "homebridge-backup-config-nightly-29477340" is invalid: spec.template.metadata.labels[job-name]: Invalid value: map[string]string{"batch.kubernetes.io/controller-uid":"7d7d0c11-87c8-4f34-8d84-198798e36d0f", "batch.kubernetes.io/job-name":"homebridge-backup-config-nightly-29477340", "controller-uid":"7d7d0c11-87c8-4f34-8d84-198798e36d0f", "job-name":"homebridge-backup-config-nightly"}: must be 'homebridge-backup-config-nightly-29477340'
+11m         Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 324ms (324ms including waiting). Image size: 11043318 bytes.
+106s        Normal    Pulling         pod/curl                                   Pulling image "curlimages/curl"
+7m30s       Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 348ms (348ms including waiting). Image size: 11043318 bytes.
+105s        Normal    Created         pod/curl                                   Created container: curl
+105s        Normal    Started         pod/curl                                   Started container curl
+119s        Warning   BackOff         pod/curl                                   Back-off restarting failed container curl in pod curl_suite(15b81a39-da21-4e08-bcb3-1ce71fc4263c)
+7m15s       Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 292ms (292ms including waiting). Image size: 11043318 bytes.
+6m47s       Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 329ms (329ms including waiting). Image size: 11043318 bytes.
+6m5s        Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 287ms (287ms including waiting). Image size: 11043318 bytes.
+4m34s       Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 300ms (300ms including waiting). Image size: 11043318 bytes.
+105s        Normal    Pulled          pod/curl                                   Successfully pulled image "curlimages/curl" in 295ms (295ms including waiting). Image size: 11043318 bytes.
+14s         Warning   FailedCreate    cronjob/homebridge-backup-config-nightly   Error creating job: Job.batch "homebridge-backup-config-nightly-29477340" is invalid: spec.template.metadata.labels[job-name]: Invalid value: map[string]string{"batch.kubernetes.io/controller-uid":"48cf3bef-5cca-48c3-b97d-0830a2c1cf99", "batch.kubernetes.io/job-name":"homebridge-backup-config-nightly-29477340", "controller-uid":"48cf3bef-5cca-48c3-b97d-0830a2c1cf99", "job-name":"homebridge-backup-config-nightly"}: must be 'homebridge-backup-config-nightly-29477340'
