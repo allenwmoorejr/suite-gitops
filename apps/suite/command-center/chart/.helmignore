@@ -1,6 +1,8 @@
-# Editor / backup files
-**/*.bak
-**/*.bak.*
-**/*~
-**/*.swp
-**/*.tmp
+# backups / editor junk
+*.bak*
+*~ 
+*.swp
+.DS_Store
+
+# stash backups here
+_bak/
