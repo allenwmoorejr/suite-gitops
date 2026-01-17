@@ -58,3 +58,6 @@ patchesJson6902:
       name: command-center-api-sse
       namespace: suite
     path: patches/patch-ingressroute-command-center-api-sse-tls.json
+
+patchesStrategicMerge:
+  - patches/patch-helmrelease-values.yaml

@@ -10,5 +10,5 @@ spec:
     app: suite-command-center-api
   ports:
     - name: http
-      port: {{ .Values.api.service.port | default 80 | default 80 }}
-      targetPort: {{ .Values.api.service.targetPort | default 8000 }}
+      port: {{ default 80 (get (get (get .Values "api") "service") "port") }}
+      targetPort: {{ default 8000 (get (get (get .Values "api") "service") "targetPort") }}
