@@ -15,3 +15,11 @@ ui:
   service:
     port: 80
     targetPort: 3000
+
+serviceAccount:
+  create: true
+  # leave empty to use chart default naming
+  name: ""
+
+rbac:
+  create: true
