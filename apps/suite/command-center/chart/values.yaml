@@ -18,14 +18,6 @@ ui:
 
 serviceAccount:
   create: true
-  # leave empty to use chart default naming
-  name: ""
-
-rbac:
-  create: true
-
-serviceAccount:
-  create: true
   name: suite-command-center-api
 
 rbac:
