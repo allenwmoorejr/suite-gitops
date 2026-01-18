@@ -6,9 +6,17 @@ REL="suite-command-center"
 CHART="apps/suite/command-center/chart"
 
 echo "== 0) Sanity: Helm render duplicate IDs (should print NOTHING) =="
-helm template "$REL" "$CHART" -n "$NS" \
+DUPES="$(helm template "$REL" "$CHART" -n "$NS" \
   | awk '/^kind: /{k=$2} /^  name: /{print k,$2}' \
-  | sort | uniq -c | awk '$1>1{print "DUP:",$0}' || true
+  | sort | uniq -c | awk '$1>1{print "DUP:",$0}' || true)"
+if [ -n "$DUPES" ]; then
+  echo "$DUPES"
+  echo
+  echo "ERROR: Duplicate Kubernetes IDs detected in Helm render."
+  echo "       This usually means backup files are being rendered."
+  echo "       Run ops/fix-command-center-helm-duplicate-templates.sh and re-run."
+  exit 1
+fi
 echo
 
 echo "== 1) If any cluster-scoped RBAC already exists, delete it (common Helm blocker) =="
