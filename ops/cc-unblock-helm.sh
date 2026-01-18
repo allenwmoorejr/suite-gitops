@@ -49,10 +49,16 @@ fi
 echo
 
 echo "== 1) If any cluster-scoped RBAC already exists, delete it (common Helm blocker) =="
-kubectl get clusterrolebinding suite-command-center-readonly >/dev/null 2>&1 && \
-  kubectl delete clusterrolebinding suite-command-center-readonly || true
-kubectl get clusterrole suite-command-center-readonly >/dev/null 2>&1 && \
-  kubectl delete clusterrole suite-command-center-readonly || true
+RBAC_NAME="${REL}-${NS}-readonly"
+if [ "${#RBAC_NAME}" -gt 63 ]; then
+  RBAC_NAME="${RBAC_NAME:0:63}"
+fi
+RBAC_NAME="${RBAC_NAME%-}"
+
+kubectl get clusterrolebinding "$RBAC_NAME" >/dev/null 2>&1 && \
+  kubectl delete clusterrolebinding "$RBAC_NAME" || true
+kubectl get clusterrole "$RBAC_NAME" >/dev/null 2>&1 && \
+  kubectl delete clusterrole "$RBAC_NAME" || true
 echo "done"
 echo
 
