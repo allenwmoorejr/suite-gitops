@@ -15,27 +15,6 @@ if [ -n "$DUPES" ]; then
   echo "ERROR: Duplicate Kubernetes IDs detected in Helm render."
   echo "       This usually means backup files are being rendered."
   echo "       Run ops/fix-command-center-helm-duplicate-templates.sh and re-run."
-  echo
-  echo "Details (duplicate resources with source files):"
-  helm template "$REL" "$CHART" -n "$NS" --debug \
-    | awk '
-        /^# Source: /{source=$3}
-        /^kind: /{kind=$2}
-        /^  name: /{
-          name=$2
-          if (kind != "" && source != "") {
-            key=kind" "name
-            count[key]++
-            sources[key]=(sources[key] ? sources[key] ", " : "") source
-          }
-        }
-        END {
-          for (k in count) {
-            if (count[k] > 1) {
-              print " - " k " -> " sources[k]
-            }
-          }
-        }'
   exit 1
 fi
 echo
