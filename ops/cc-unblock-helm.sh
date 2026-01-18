@@ -42,6 +42,22 @@ echo "done"
 echo
 
 echo "== 4) Reconcile with a real timeout (Flux waits can time out even when retries are ongoing) =="
+echo "== 4a) Quick Flux source-controller check (service port + endpoints) =="
+if kubectl -n flux-system get svc source-controller >/dev/null 2>&1; then
+  SVC_PORT="$(kubectl -n flux-system get svc source-controller -o jsonpath='{.spec.ports[0].targetPort}' 2>/dev/null || echo UNKNOWN)"
+  if [ "$SVC_PORT" != "9090" ]; then
+    echo "WARN: flux-system/source-controller service targetPort is '$SVC_PORT' (expected 9090)."
+    echo "      Run ops/ansible/bin/run-fix-flux-source.sh to patch + restart source-controller."
+  fi
+
+  ENDPOINT_IP="$(kubectl -n flux-system get endpointslice -l kubernetes.io/service-name=source-controller -o jsonpath='{.items[0].endpoints[0].addresses[0]}' 2>/dev/null || echo NONE)"
+  if [ "$ENDPOINT_IP" = "NONE" ]; then
+    echo "WARN: no endpoints found for source-controller; reconcile requests may time out."
+  fi
+else
+  echo "WARN: flux-system/source-controller service not found."
+fi
+
 flux reconcile source git flux-system -n flux-system --timeout=5m
 flux reconcile helmrelease "$REL" -n "$NS" --with-source --timeout=15m
 
