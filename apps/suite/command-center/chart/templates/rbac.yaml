@@ -1,65 +1,42 @@
 {{- $sa := .Values.serviceAccount | default dict -}}
 {{- $rbac := .Values.rbac | default dict -}}
-{{- if (get $rbac "create" | default true) }}
+{{- if (get $rbac "create" | default true) -}}
+{{- $rbacName := printf "%s-%s-readonly" .Release.Name .Release.Namespace -}}
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suite-command-center-readonly
+  name: {{ $rbacName }}
 rules:
   - apiGroups: [""]
-    resources:
-      - pods
-      - pods/log
-      - services
-      - endpoints
-      - nodes
-      - namespaces
-      - configmaps
-    verbs: ["get", "list", "watch"]
-
+    resources: ["pods","pods/log","services","endpoints","nodes","namespaces","configmaps"]
+    verbs: ["get","list","watch"]
   - apiGroups: ["discovery.k8s.io"]
     resources: ["endpointslices"]
-    verbs: ["get", "list", "watch"]
-
+    verbs: ["get","list","watch"]
   - apiGroups: ["apps"]
-    resources:
-      - deployments
-      - replicasets
-      - statefulsets
-      - daemonsets
-    verbs: ["get", "list", "watch"]
-
+    resources: ["deployments","replicasets","statefulsets","daemonsets"]
+    verbs: ["get","list","watch"]
   - apiGroups: ["batch"]
-    resources: ["jobs", "cronjobs"]
-    verbs: ["get", "list", "watch"]
-
+    resources: ["jobs","cronjobs"]
+    verbs: ["get","list","watch"]
   - apiGroups: ["networking.k8s.io"]
-    resources: ["ingresses", "networkpolicies"]
-    verbs: ["get", "list", "watch"]
-
+    resources: ["ingresses"]
+    verbs: ["get","list","watch"]
   - apiGroups: ["traefik.io"]
-    resources:
-      - ingressroutes
-      - middlewares
-      - ingressroutetcps
-      - ingressrouteudps
-      - tlsoptions
-      - tlsstores
-    verbs: ["get", "list", "watch"]
-
+    resources: ["ingressroutes","middlewares"]
+    verbs: ["get","list","watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: suite-command-center-readonly
+  name: {{ $rbacName }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: suite-command-center-readonly
+  name: {{ $rbacName }}
 subjects:
   - kind: ServiceAccount
     name: {{ (get $sa "name" | default "suite-command-center-api") }}
     namespace: {{ .Release.Namespace }}
-
 {{- end }}

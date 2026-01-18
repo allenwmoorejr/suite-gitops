@@ -23,3 +23,10 @@ serviceAccount:
 
 rbac:
   create: true
+
+serviceAccount:
+  create: true
+  name: suite-command-center-api
+
+rbac:
+  create: true
