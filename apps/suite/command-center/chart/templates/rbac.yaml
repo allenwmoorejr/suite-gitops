@@ -1,6 +1,19 @@
-{{- if (dig "rbac" "create" true .Values) -}}
+{{- $rbacCreate := true -}}
+{{- if hasKey .Values "rbac" -}}
+  {{- if hasKey .Values.rbac "create" -}}
+    {{- $rbacCreate = .Values.rbac.create -}}
+  {{- end -}}
+{{- end -}}
+{{- if $rbacCreate -}}
+
 {{- $name := printf "%s-%s-readonly" .Release.Name .Release.Namespace | trunc 63 | trimSuffix "-" -}}
-{{- $sa := (dig "serviceAccount" "name" "" .Values) | default "suite-command-center-api" -}}
+
+{{- $sa := "suite-command-center-api" -}}
+{{- if hasKey .Values "serviceAccount" -}}
+  {{- if hasKey .Values.serviceAccount "name" -}}
+    {{- $sa = .Values.serviceAccount.name -}}
+  {{- end -}}
+{{- end -}}
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
