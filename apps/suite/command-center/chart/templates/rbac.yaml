@@ -1,24 +1,53 @@
-{{- if (default true .Values.serviceAccount.create) }}
+{{- $sa := .Values.serviceAccount | default dict -}}
+{{- $rbac := .Values.rbac | default dict -}}
+{{- if (get $rbac "create" | default true) }}
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: suite-command-center-readonly
 rules:
-  - apiGroups: ["", "apps", "batch", "networking.k8s.io", "traefik.io"]
+  - apiGroups: [""]
     resources:
       - pods
+      - pods/log
       - services
       - endpoints
       - nodes
       - namespaces
+      - configmaps
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["apps"]
+    resources:
       - deployments
       - replicasets
-      - jobs
-      - cronjobs
-      - ingresses
+      - statefulsets
+      - daemonsets
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["traefik.io"]
+    resources:
       - ingressroutes
       - middlewares
+      - ingressroutetcps
+      - ingressrouteudps
+      - tlsoptions
+      - tlsstores
     verbs: ["get", "list", "watch"]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -30,6 +59,7 @@ roleRef:
   name: suite-command-center-readonly
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.serviceAccount.name | default "suite-command-center-api" }}
+    name: {{ (get $sa "name" | default "suite-command-center-api") }}
     namespace: {{ .Release.Namespace }}
+
 {{- end }}
