@@ -19,6 +19,23 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      repository: registry.suite.home.arpa:5000/suite-command-center-api
+      tag: "20260114-1050"
+      pullPolicy: IfNotPresent
+
     ui:
-      repository: registry.suite.home.arpa:5000/suite-command-center-ui
-      tag: 20260114-1050
+      image:
+        repository: registry.suite.home.arpa:5000/suite-command-center-ui
+        tag: "20260114-1050"
+        pullPolicy: IfNotPresent
+      service:
+        port: 80
+        targetPort: 3000
+
+    serviceAccount:
+      create: true
+      name: suite-command-center-api
+
+    rbac:
+      create: true
