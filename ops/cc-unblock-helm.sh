@@ -101,8 +101,23 @@ else
   echo "WARN: flux-system/source-controller service not found."
 fi
 
-flux reconcile source git flux-system -n flux-system --timeout=5m
-flux reconcile helmrelease "$REL" -n "$NS" --with-source --timeout=15m
+if ! flux reconcile source git flux-system -n flux-system --timeout=5m; then
+  echo "ERROR: flux source reconcile failed."
+  echo "== source-controller logs (last 5m) =="
+  kubectl -n flux-system logs deploy/source-controller --since=5m || true
+  exit 1
+fi
+
+if ! flux reconcile helmrelease "$REL" -n "$NS" --with-source --timeout=15m; then
+  echo "ERROR: flux helmrelease reconcile failed."
+  echo "== helmrelease status =="
+  kubectl -n "$NS" get helmrelease "$REL" -o wide || true
+  kubectl -n "$NS" describe helmrelease "$REL" || true
+  echo
+  echo "== helm-controller logs (last 10m) =="
+  kubectl -n flux-system logs deploy/helm-controller --since=10m || true
+  exit 1
+fi
 
 echo
 echo "== 5) Quick status =="
