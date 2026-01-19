@@ -1,0 +1,83 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: frigate
+  namespace: observe
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: frigate
+      version: "7.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: blakeshome
+        namespace: flux-system
+      interval: 30m
+  values:
+    # The chart expects the Frigate configuration under values.config as a YAML string
+    # (this becomes /config/config.yml inside the container).
+    config: |
+      mqtt:
+        enabled: true
+        host: mosquitto.suite.svc.cluster.local
+        port: 1883
+        topic_prefix: frigate
+        client_id: frigate
+
+      logger:
+        default: info
+        logs:
+          frigate.video: debug
+          frigate.ffmpeg: debug
+
+      detectors:
+        cpu1:
+          type: cpu
+
+      ffmpeg:
+        input_args:
+          - -rtsp_transport
+          - tcp
+          # tolerate garbage / recover
+          - -fflags
+          - +genpts+discardcorrupt
+          - -flags
+          - low_delay
+          # increase probe just enough to catch SPS/PPS/IDR
+          - -analyzeduration
+          - "8000000"
+          - -probesize
+          - "8000000"
+          # drop audio (keeps things calmer)
+          - -an
+
+      record:
+        enabled: true
+        retain:
+          days: 7
+          mode: motion
+
+      snapshots:
+        enabled: true
+        retain:
+          default: 7
+
+      cameras:
+        aqara_g5pro:
+          ffmpeg:
+            inputs:
+              - path: rtsp://819:634@192.168.50.193:8554/ch2
+                roles:
+                  - detect
+                  - record
+
+          detect:
+            enabled: true
+            fps: 5
+
+          objects:
+            track:
+              - person
+              - car
+              - package

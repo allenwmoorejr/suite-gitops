@@ -1,0 +1,18 @@
+config: "mqtt:\n  enabled: false\n\nlogger:\n  default: info\n  logs:\n    frigate.video:\
+  \ debug\n    frigate.ffmpeg: debug\n\ndetectors:\n  cpu1:\n    type: cpu\n\nffmpeg:\n\
+  \  input_args:\n    - -rtsp_transport\n    - tcp\n    # tolerate garbage / recover\n\
+  \    - -fflags\n    - +genpts+discardcorrupt\n    - -flags\n    - low_delay\n  \
+  \  # increase probe just enough to catch SPS/PPS/IDR\n    - -analyzeduration\n \
+  \   - \"8000000\"\n    - -probesize\n    - \"8000000\"\n    # drop audio (keeps\
+  \ things calmer)\n    - -an\n\nrecord:\n  enabled: true\n  retain:\n    days: 7\n\
+  \    mode: motion\n\nsnapshots:\n  enabled: true\n  retain:\n    default: 7\n\n\
+  cameras:\n  aqara_g5pro:\n    ffmpeg:\n      inputs:\n        - path: rtsp://819:634@192.168.50.193:8554/ch2\n\
+  \          roles:\n            - detect\n            - record\n\n    detect:\n \
+  \     enabled: true\n      fps: 5\n"
+persistence:
+  config:
+    enabled: true
+    mountPath: /config
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn
