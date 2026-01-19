@@ -20,7 +20,7 @@ spec:
     config: |
       mqtt:
         enabled: true
-        host: mosquitto.suite.svc.cluster.local
+        host: mosquitto.carpi.svc.cluster.local
         port: 1883
         topic_prefix: frigate
         client_id: frigate
