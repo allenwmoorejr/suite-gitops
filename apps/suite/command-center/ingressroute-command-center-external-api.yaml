@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`command-center.allenwmoorejr.org`) && (PathPrefix(`/v1`) || PathPrefix(`/stream`) || PathPrefix(`/healthz`) || PathPrefix(`/metrics`))
+      match: Host(`command-center.allenwmoorejr.org`) && (PathPrefix(`/api`) || PathPrefix(`/v1`) || PathPrefix(`/cluster`) || PathPrefix(`/stream`) || PathPrefix(`/healthz`) || PathPrefix(`/metrics`) || PathPrefix(`/sensors`))
       priority: 100
       middlewares:
         - name: command-center-http11
