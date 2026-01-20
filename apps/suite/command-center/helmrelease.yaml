@@ -34,7 +34,7 @@ spec:
         targetPort: 3000
 
     serviceAccount:
-      create: true
+      create: false
       name: suite-command-center-api
 
     rbac:
