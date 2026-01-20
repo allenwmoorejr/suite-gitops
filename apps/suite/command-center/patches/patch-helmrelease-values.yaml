@@ -8,7 +8,8 @@ spec:
     api:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-api
-        tag: 20260114-1050
+        tag: latest
+        pullPolicy: Always
       service:
         port: 80
         targetPort: 8000
