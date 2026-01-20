@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ui
-          image: "{{ .Values.ui.repository }}:{{ .Values.ui.tag }}"
+          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
