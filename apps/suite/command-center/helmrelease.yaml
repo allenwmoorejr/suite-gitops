@@ -19,10 +19,11 @@ spec:
     remediation:
       retries: 3
   values:
-    image:
-      repository: registry.suite.home.arpa:5000/suite-command-center-api
-      tag: "20260114-1050"
-      pullPolicy: IfNotPresent
+    api:
+      image:
+        repository: registry.suite.home.arpa:5000/suite-command-center-api
+        tag: "latest"
+        pullPolicy: Always
 
     ui:
       image:
