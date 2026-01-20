@@ -9,6 +9,8 @@ resources:
   - ingressroute-command-center-ui.yaml
   - ingressroute-command-center-api.yaml
   - ingressroute-command-center-api-sse.yaml
+  - ingressroute-command-center-external-api.yaml
+  - ingressroute-command-center-external-ui.yaml
   - middleware-strip-api.yaml
   - middleware-strip-v1.yaml
   - mw-command-center-http11.yaml
