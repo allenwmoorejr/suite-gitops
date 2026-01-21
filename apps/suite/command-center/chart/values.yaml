@@ -10,7 +10,7 @@ api:
 ui:
   image:
     repository: registry.suite.home.arpa:5000/suite-command-center-ui
-    tag: 20260114-1050
+    tag: neon-20260120-2031
     pullPolicy: IfNotPresent
   service:
     port: 80
