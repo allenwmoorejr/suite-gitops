@@ -14,17 +14,15 @@ spec:
       middlewares:
         - name: command-center-strip-api
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
 
-    # /v1/* -> shim (strip /v1)
+    # /v1/* -> api (no strip, API expects /v1 prefix)
     - match: Host(`command-center.suite.home.arpa`) && PathPrefix(`/v1`)
       kind: Rule
       priority: 9990
-      middlewares:
-        - name: command-center-strip-v1
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
 
     # /cluster/* -> shim
@@ -32,7 +30,7 @@ spec:
       kind: Rule
       priority: 9980
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
 
     # OPTIONAL: if the UI is calling these directly, route them too
@@ -40,6 +38,6 @@ spec:
       kind: Rule
       priority: 9970
       services:
-        - name: suite-command-center-api-shim
+        - name: suite-command-center-api
           port: 80
   tls: {}
