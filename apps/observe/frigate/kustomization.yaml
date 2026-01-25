@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - helmrepo-blakeshome.yaml
   - helmrelease-frigate.yaml
+  - ingressroute-frigate-ui.yaml

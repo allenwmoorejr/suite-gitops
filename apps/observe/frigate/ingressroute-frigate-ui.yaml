@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: frigate-ui
+  namespace: observe
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`frigate.allenwmoorejr.org`)
+      kind: Rule
+      services:
+        - name: frigate
+          port: 5000
+  tls: {}
