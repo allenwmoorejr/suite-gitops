@@ -5,4 +5,5 @@ resources:
   - helmrelease.yaml
   - image-automation/
   - ingressroute.yaml
+  - certificate.yaml
   - netpol-allow-traefik.yaml

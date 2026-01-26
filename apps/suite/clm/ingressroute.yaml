@@ -13,4 +13,4 @@ spec:
         - name: clm
           port: 80
   tls:
-    certResolver: letsencrypt
+    secretName: clm-tls
