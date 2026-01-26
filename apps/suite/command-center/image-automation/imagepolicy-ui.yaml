@@ -30,5 +30,5 @@ spec:
     pattern: '^(?P<prefix>.*-)?(?P<ts>\d{8}-\d{4,6})$'
     extract: '$ts'
   policy:
-    numerical:
-      order: asc  # Higher numbers = newer timestamps
+    alphabetical:
+      order: asc  # YYYYMMDD-HHMMSS sorts correctly alphabetically timestamps
