@@ -43,14 +43,7 @@ spec:
       author:
         email: flux@suite.home.arpa
         name: Flux Image Automation
-      messageTemplate: |
-        chore(command-center): update image tags
-
-        {{- range $image, $_ := .Changed.Images }}
-        - {{ $image.Repository }}:{{ $image.Tag }}
-        {{- end }}
-
-        [ci skip]
+      messageTemplate: 'chore(command-center): update image tag [automated]'
     push:
       branch: main
   update:

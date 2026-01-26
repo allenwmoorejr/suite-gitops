@@ -18,8 +18,7 @@ spec:
       author:
         email: flux@suite.home.arpa
         name: Flux
-      messageTemplate: |
-        chore(clm): update image to {{ .NewImage }}
+      messageTemplate: 'chore(clm): update image tag [automated]'
     push:
       branch: main
   update:
