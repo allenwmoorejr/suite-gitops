@@ -1,0 +1,27 @@
+---
+# ImageUpdateAutomation: Commits updated image tags to Git
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: clm
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: flux@suite.home.arpa
+        name: Flux
+      messageTemplate: |
+        chore(clm): update image to {{ .NewImage }}
+    push:
+      branch: main
+  update:
+    path: ./apps/suite/clm
+    strategy: Setters

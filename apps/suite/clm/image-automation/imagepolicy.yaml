@@ -1,0 +1,17 @@
+---
+# ImagePolicy: Selects latest timestamp-based tag
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: clm
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: clm
+  filterTags:
+    # Match tags like: 20260126-153045
+    pattern: '^(?P<ts>\d{8}-\d{6})$'
+    extract: '$ts'
+  policy:
+    numerical:
+      order: asc  # Higher numbers = newer timestamps

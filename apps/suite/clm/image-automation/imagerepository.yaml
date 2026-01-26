@@ -1,0 +1,11 @@
+---
+# ImageRepository: Scans container registry for available CLM image tags
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: clm
+  namespace: flux-system
+spec:
+  image: registry.suite.home.arpa:5000/clm
+  interval: 1m0s
+  insecure: true

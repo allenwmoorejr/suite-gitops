@@ -1,0 +1,10 @@
+ui:
+  image:
+    repository: registry.suite.home.arpa:5000/clm
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  service:
+    port: 80
+    targetPort: 3000
+  env: {}
