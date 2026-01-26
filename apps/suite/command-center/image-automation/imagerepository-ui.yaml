@@ -2,7 +2,7 @@
 # ImageRepository: Scans your container registry for available image tags
 #
 # HOW IT WORKS:
-# - Connects to your private registry at registry.suite.home.arpa:5000
+# - Connects to your private registry at 192.168.50.248:5000
 # - Scans for all tags of the command-center-ui image
 # - Stores the list of available tags in the cluster
 # - Rescans every 1 minute (interval: 1m0s)
@@ -18,6 +18,6 @@ metadata:
   name: command-center-ui
   namespace: flux-system
 spec:
-  image: registry.suite.home.arpa:5000/suite-command-center-ui
+  image: 192.168.50.248:5000/suite-command-center-ui
   interval: 1m0s
   insecure: true
