@@ -9,6 +9,11 @@ spec:
   routes:
     - match: Host(`clm.allenwmoorejr.org`)
       kind: Rule
+      middlewares:
+        - name: security-headers
+          namespace: suite
+        - name: redirect-https
+          namespace: suite
       services:
         - name: clm
           port: 80

@@ -7,3 +7,4 @@ resources:
   - ingressroute.yaml
   - certificate.yaml
   - netpol-allow-traefik.yaml
+  - cloudflare-tunnel.yaml

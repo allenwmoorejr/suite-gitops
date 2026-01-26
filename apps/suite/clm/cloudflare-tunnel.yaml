@@ -1,0 +1,80 @@
+---
+# Cloudflare Tunnel Deployment for CLM Public Access
+#
+# This exposes CLM to the internet via Cloudflare Tunnel,
+# providing DDoS protection and hiding the home IP.
+#
+# PREREQUISITES:
+# 1. Create tunnel: cloudflared tunnel create clm
+# 2. Create DNS route: cloudflared tunnel route dns clm clm.allenwmoorejr.org
+# 3. Create secret: kubectl create secret generic cloudflare-tunnel-clm \
+#      --from-file=credentials.json=$HOME/.cloudflared/<TUNNEL_ID>.json -n suite
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-tunnel-clm-config
+  namespace: suite
+data:
+  config.yaml: |
+    tunnel: clm
+    credentials-file: /etc/cloudflared/credentials.json
+
+    ingress:
+      # CLM site
+      - hostname: clm.allenwmoorejr.org
+        service: http://clm:80
+        originRequest:
+          noTLSVerify: true
+
+      # Catch-all (required by cloudflared)
+      - service: http_status:404
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-tunnel-clm
+  namespace: suite
+  labels:
+    app: cloudflare-tunnel-clm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-tunnel-clm
+  template:
+    metadata:
+      labels:
+        app: cloudflare-tunnel-clm
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2024.1.5
+          args:
+            - tunnel
+            - --config
+            - /etc/cloudflared/config.yaml
+            - run
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            - name: credentials
+              mountPath: /etc/cloudflared/credentials.json
+              subPath: credentials.json
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflare-tunnel-clm-config
+        - name: credentials
+          secret:
+            secretName: cloudflare-tunnel-clm
