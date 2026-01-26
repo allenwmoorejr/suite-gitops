@@ -25,16 +25,15 @@ spec:
     api:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-api
-        tag: latest  # {"$imagepolicy": "flux-system:command-center-api:tag"}
+        tag: latest # {"$imagepolicy": "flux-system:command-center-api:tag"}
         pullPolicy: Always
       service:
         port: 80
         targetPort: 8000
-
     ui:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-ui
-        tag: 20260114-1050  # {"$imagepolicy": "flux-system:command-center-ui:tag"}
+        tag: neon-20260120-2031 # {"$imagepolicy": "flux-system:command-center-ui:tag"}
       service:
         port: 80
         targetPort: 3000
