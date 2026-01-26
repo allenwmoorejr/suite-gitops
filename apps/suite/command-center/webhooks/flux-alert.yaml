@@ -1,0 +1,70 @@
+---
+# Flux Alert for Command Center Deployment Events
+#
+# This alert triggers notifications when the HelmRelease for
+# command-center is reconciled (deployed) or fails.
+#
+# Events sent:
+# - info: Successful reconciliation
+# - error: Failed reconciliation
+#
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: command-center-deployment
+  namespace: flux-system
+spec:
+  summary: "Command Center deployment status"
+  providerRef:
+    name: github-command-center
+  eventSeverity: info
+  eventSources:
+    - kind: HelmRelease
+      name: suite-command-center
+      namespace: suite
+    - kind: ImageUpdateAutomation
+      name: command-center
+      namespace: flux-system
+  # Only alert on these specific events
+  inclusionList:
+    - ".*succeeded.*"
+    - ".*failed.*"
+    - ".*progressing.*"
+---
+# Alert for status page updates
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: command-center-status-page
+  namespace: flux-system
+spec:
+  summary: "Command Center deployment status for external monitoring"
+  providerRef:
+    name: status-webhook
+  eventSeverity: info
+  eventSources:
+    - kind: HelmRelease
+      name: suite-command-center
+      namespace: suite
+---
+# Alert for image automation events (when new tags are committed)
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: command-center-image-updates
+  namespace: flux-system
+spec:
+  summary: "Command Center image tag updates"
+  providerRef:
+    name: generic-webhook
+  eventSeverity: info
+  eventSources:
+    - kind: ImageUpdateAutomation
+      name: command-center
+      namespace: flux-system
+    - kind: ImagePolicy
+      name: command-center-ui
+      namespace: flux-system
+    - kind: ImagePolicy
+      name: command-center-api
+      namespace: flux-system

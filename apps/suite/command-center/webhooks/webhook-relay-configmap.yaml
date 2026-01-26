@@ -1,0 +1,146 @@
+---
+# Webhook Relay Scripts
+#
+# These scripts can be used by Jenkins or other CI systems to:
+# 1. Send GitHub deployment status updates
+# 2. Notify external status pages
+# 3. Trigger downstream webhooks
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webhook-relay-scripts
+  namespace: jenkins
+data:
+  # Script to update GitHub deployment status
+  github-deployment-status.sh: |
+    #!/bin/bash
+    # Usage: github-deployment-status.sh <state> <description> [environment]
+    # States: pending, success, failure, error, inactive
+    #
+    # Required env vars:
+    #   GITHUB_TOKEN - GitHub token with repo scope
+    #   GITHUB_REPO  - Full repo name (owner/repo)
+    #   GITHUB_SHA   - Commit SHA to update
+    #
+    set -euo pipefail
+
+    STATE="${1:-pending}"
+    DESCRIPTION="${2:-Deployment in progress}"
+    ENVIRONMENT="${3:-production}"
+
+    if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+      echo "ERROR: GITHUB_TOKEN not set"
+      exit 1
+    fi
+
+    if [[ -z "${GITHUB_REPO:-}" ]]; then
+      echo "ERROR: GITHUB_REPO not set"
+      exit 1
+    fi
+
+    if [[ -z "${GITHUB_SHA:-}" ]]; then
+      echo "ERROR: GITHUB_SHA not set"
+      exit 1
+    fi
+
+    # First, create a deployment if it doesn't exist
+    DEPLOYMENT_ID=$(curl -s -X POST \
+      -H "Authorization: token ${GITHUB_TOKEN}" \
+      -H "Accept: application/vnd.github.v3+json" \
+      "https://api.github.com/repos/${GITHUB_REPO}/deployments" \
+      -d "{
+        \"ref\": \"${GITHUB_SHA}\",
+        \"environment\": \"${ENVIRONMENT}\",
+        \"auto_merge\": false,
+        \"required_contexts\": []
+      }" | jq -r '.id // empty')
+
+    if [[ -z "$DEPLOYMENT_ID" ]]; then
+      echo "WARNING: Could not create deployment, trying to find existing one"
+      DEPLOYMENT_ID=$(curl -s \
+        -H "Authorization: token ${GITHUB_TOKEN}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        "https://api.github.com/repos/${GITHUB_REPO}/deployments?sha=${GITHUB_SHA}&environment=${ENVIRONMENT}" \
+        | jq -r '.[0].id // empty')
+    fi
+
+    if [[ -z "$DEPLOYMENT_ID" ]]; then
+      echo "ERROR: Could not find or create deployment"
+      exit 1
+    fi
+
+    # Now update the deployment status
+    curl -s -X POST \
+      -H "Authorization: token ${GITHUB_TOKEN}" \
+      -H "Accept: application/vnd.github.v3+json" \
+      "https://api.github.com/repos/${GITHUB_REPO}/deployments/${DEPLOYMENT_ID}/statuses" \
+      -d "{
+        \"state\": \"${STATE}\",
+        \"description\": \"${DESCRIPTION}\",
+        \"environment\": \"${ENVIRONMENT}\"
+      }"
+
+    echo "Updated deployment ${DEPLOYMENT_ID} status to ${STATE}"
+
+  # Script to send generic webhook notification
+  notify-webhook.sh: |
+    #!/bin/bash
+    # Usage: notify-webhook.sh <webhook_url> <status> <message>
+    #
+    # Sends a JSON payload to any webhook endpoint
+    #
+    set -euo pipefail
+
+    WEBHOOK_URL="${1:-}"
+    STATUS="${2:-info}"
+    MESSAGE="${3:-Deployment notification}"
+    BUILD_TAG="${BUILD_TAG:-unknown}"
+    BUILD_URL="${BUILD_URL:-}"
+
+    if [[ -z "$WEBHOOK_URL" ]]; then
+      echo "ERROR: Webhook URL required"
+      exit 1
+    fi
+
+    PAYLOAD=$(cat <<EOF
+    {
+      "status": "${STATUS}",
+      "message": "${MESSAGE}",
+      "build_tag": "${BUILD_TAG}",
+      "build_url": "${BUILD_URL}",
+      "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+      "service": "command-center"
+    }
+    EOF
+    )
+
+    curl -s -X POST \
+      -H "Content-Type: application/json" \
+      -d "${PAYLOAD}" \
+      "${WEBHOOK_URL}"
+
+    echo "Sent notification to ${WEBHOOK_URL}"
+
+  # Script to wait for deployment and verify
+  wait-for-deployment.sh: |
+    #!/bin/bash
+    # Usage: wait-for-deployment.sh <deployment_name> <namespace> [timeout_seconds]
+    #
+    # Waits for a Kubernetes deployment to complete and returns status
+    #
+    set -euo pipefail
+
+    DEPLOYMENT="${1:-suite-command-center-ui}"
+    NAMESPACE="${2:-suite}"
+    TIMEOUT="${3:-300}"
+
+    echo "Waiting for deployment ${NAMESPACE}/${DEPLOYMENT} (timeout: ${TIMEOUT}s)"
+
+    if kubectl -n "${NAMESPACE}" rollout status "deployment/${DEPLOYMENT}" --timeout="${TIMEOUT}s"; then
+      echo "SUCCESS: Deployment completed"
+      exit 0
+    else
+      echo "FAILURE: Deployment did not complete within ${TIMEOUT}s"
+      exit 1
+    fi

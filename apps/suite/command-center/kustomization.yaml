@@ -4,6 +4,9 @@ kind: Kustomization
 resources:
   - helmrelease.yaml
 
+  # Image automation (auto-updates image tags when new builds are pushed)
+  - image-automation/
+
   # Ingress + middleware
   - ingressroute-command-center.yaml
   - ingressroute-command-center-ui.yaml

@@ -1,0 +1,88 @@
+---
+# Cloudflare Tunnel Deployment for Jenkins Webhook Ingress
+#
+# This exposes Jenkins webhook endpoint to the internet via Cloudflare Tunnel,
+# allowing GitHub to send push events to trigger builds.
+#
+# PREREQUISITES:
+# 1. Create tunnel: cloudflared tunnel create jenkins-webhook
+# 2. Create DNS route: cloudflared tunnel route dns jenkins-webhook jenkins-webhook.allenwmoorejr.org
+# 3. Create secret: kubectl create secret generic cloudflare-tunnel-jenkins \
+#      --from-file=credentials.json=$HOME/.cloudflared/<TUNNEL_ID>.json -n jenkins
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-tunnel-jenkins-config
+  namespace: jenkins
+data:
+  config.yaml: |
+    tunnel: jenkins-webhook
+    credentials-file: /etc/cloudflared/credentials.json
+
+    ingress:
+      # Jenkins GitHub webhook endpoint
+      - hostname: jenkins-webhook.allenwmoorejr.org
+        path: /github-webhook/
+        service: http://jenkins:8080
+        originRequest:
+          noTLSVerify: true
+
+      # Jenkins generic webhook trigger (for other integrations)
+      - hostname: jenkins-webhook.allenwmoorejr.org
+        path: /generic-webhook-trigger/
+        service: http://jenkins:8080
+        originRequest:
+          noTLSVerify: true
+
+      # Catch-all (required by cloudflared)
+      - service: http_status:404
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-tunnel-jenkins
+  namespace: jenkins
+  labels:
+    app: cloudflare-tunnel-jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-tunnel-jenkins
+  template:
+    metadata:
+      labels:
+        app: cloudflare-tunnel-jenkins
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2024.1.5
+          args:
+            - tunnel
+            - --config
+            - /etc/cloudflared/config.yaml
+            - run
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            - name: credentials
+              mountPath: /etc/cloudflared/credentials.json
+              subPath: credentials.json
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflare-tunnel-jenkins-config
+        - name: credentials
+          secret:
+            secretName: cloudflare-tunnel-jenkins

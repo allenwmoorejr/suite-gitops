@@ -1,0 +1,58 @@
+---
+# ImageUpdateAutomation: Automatically commits image tag updates to Git
+#
+# HOW IT WORKS:
+# 1. Watches ImagePolicy resources for new tag selections
+# 2. Scans files in the specified path for update markers (see below)
+# 3. Replaces old tags with new tags in those files
+# 4. Commits and pushes changes to the Git repository
+# 5. Flux then deploys the updated manifests automatically
+#
+# UPDATE MARKERS:
+# Add these comments next to image tags in your YAML files:
+#   tag: "20260114-1050"  # {"$imagepolicy": "flux-system:command-center-ui:tag"}
+#
+# The marker format is: # {"$imagepolicy": "NAMESPACE:POLICY_NAME:FIELD"}
+# - NAMESPACE: Where the ImagePolicy lives (flux-system)
+# - POLICY_NAME: Name of the ImagePolicy (command-center-ui or command-center-api)
+# - FIELD: What to extract (tag, name, or full image reference)
+#
+# MAINTENANCE:
+# - Commits are signed with the author specified below
+# - Check Git history for [ci skip] commits from this automation
+# - If automation stops working, check:
+#   1. flux-system-git-auth secret has push permissions
+#   2. ImageRepository can reach the registry
+#   3. ImagePolicy is selecting valid tags (flux get image policy -A)
+#
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: command-center
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: flux@suite.home.arpa
+        name: Flux Image Automation
+      messageTemplate: |
+        chore(command-center): update image tags
+
+        {{- range $image, $_ := .Changed.Images }}
+        - {{ $image.Repository }}:{{ $image.Tag }}
+        {{- end }}
+
+        [ci skip]
+    push:
+      branch: main
+  update:
+    path: ./apps/suite/command-center
+    strategy: Setters

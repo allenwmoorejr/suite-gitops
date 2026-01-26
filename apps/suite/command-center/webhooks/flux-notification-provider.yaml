@@ -1,0 +1,54 @@
+---
+# Flux Notification Provider for GitHub Deployment Status
+#
+# This provider sends deployment status updates to GitHub when
+# HelmReleases are reconciled (deployed) or fail.
+#
+# PREREQUISITES:
+# Create a GitHub token with 'repo' scope and store it:
+#   kubectl create secret generic github-token \
+#     --from-literal=token=ghp_XXXXXXXXXXXX \
+#     -n flux-system
+#
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: github-command-center
+  namespace: flux-system
+spec:
+  type: github
+  address: https://github.com/YOUR_ORG/YOUR_REPO
+  secretRef:
+    name: github-token
+---
+# Generic Webhook Provider for external status page
+#
+# This sends JSON payloads to any HTTP endpoint when events occur.
+# Configure your status page endpoint URL here.
+#
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: status-webhook
+  namespace: flux-system
+spec:
+  type: generic
+  address: https://status.allenwmoorejr.org/api/webhook/deployment
+  # Optional: Add authentication header
+  # secretRef:
+  #   name: status-webhook-secret
+---
+# Generic Webhook Provider for custom notifications
+#
+# You can use this to trigger other systems (Home Assistant, ntfy, etc.)
+#
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: generic-webhook
+  namespace: flux-system
+spec:
+  type: generic-hmac
+  address: https://webhook.allenwmoorejr.org/flux
+  secretRef:
+    name: webhook-hmac-secret

@@ -1,0 +1,34 @@
+---
+# ImagePolicy: Defines which image tag to use from available tags
+#
+# HOW IT WORKS:
+# - References the ImageRepository to get the list of available tags
+# - Uses a filter pattern to match tags (e.g., YYYYMMDD-HHMMSS format)
+# - Uses numerical sorting to pick the highest/latest tag
+# - Stores the selected tag for ImageUpdateAutomation to use
+#
+# TAG FORMAT: Your Jenkins builds create tags like "20260114-1050"
+# - The regex ^(?P<ts>\d{8}-\d{4,6})$ captures timestamp-based tags
+# - Numerical sorting ensures the latest timestamp wins
+#
+# MAINTENANCE:
+# - If you change tag format, update the 'filterTags.pattern' regex
+# - The 'extract' field captures the sortable portion of the tag
+# - To pin a specific version, change policy.numerical to policy.semver
+#   and use semantic versioning in your tags instead
+#
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: command-center-ui
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: command-center-ui
+  filterTags:
+    # Match tags like: 20260114-1050, 20260120-2031, neon-20260120-2031
+    pattern: '^(?P<prefix>.*-)?(?P<ts>\d{8}-\d{4,6})$'
+    extract: '$ts'
+  policy:
+    numerical:
+      order: asc  # Higher numbers = newer timestamps

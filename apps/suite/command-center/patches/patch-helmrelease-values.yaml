@@ -1,3 +1,20 @@
+# HelmRelease values patch for command-center
+#
+# IMAGE AUTOMATION MARKERS:
+# The comments like # {"$imagepolicy": "..."} are markers that tell Flux
+# where to update image tags automatically. DO NOT remove these comments!
+#
+# When a new image is pushed to the registry:
+# 1. ImageRepository detects the new tag
+# 2. ImagePolicy selects it based on the filter (timestamp sorting)
+# 3. ImageUpdateAutomation updates this file and commits to Git
+# 4. Flux deploys the new version automatically
+#
+# MAINTENANCE:
+# - To disable auto-updates for a service, remove its marker comment
+# - To pin a specific version, remove the marker and set the tag manually
+# - The API uses 'latest' tag (no automation) - update manually or add a marker
+#
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -8,7 +25,7 @@ spec:
     api:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-api
-        tag: latest
+        tag: latest  # {"$imagepolicy": "flux-system:command-center-api:tag"}
         pullPolicy: Always
       service:
         port: 80
@@ -17,7 +34,7 @@ spec:
     ui:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-ui
-        tag: 20260114-1050
+        tag: 20260114-1050  # {"$imagepolicy": "flux-system:command-center-ui:tag"}
       service:
         port: 80
         targetPort: 3000

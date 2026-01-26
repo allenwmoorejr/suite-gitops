@@ -1,0 +1,21 @@
+---
+# Kustomization for Image Automation resources
+#
+# HOW IT WORKS:
+# This file tells Flux/Kustomize which resources to deploy in this directory.
+# Add new ImageRepository or ImagePolicy files here when you add new images.
+#
+# MAINTENANCE:
+# - When adding a new service image, create imagerepository-*.yaml and
+#   imagepolicy-*.yaml files, then add them to the resources list below
+# - The imageupdateautomation.yaml handles ALL images in the command-center
+#   app, so you don't need one per image
+#
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - imagerepository-ui.yaml
+  - imagerepository-api.yaml
+  - imagepolicy-ui.yaml
+  - imagepolicy-api.yaml
+  - imageupdateautomation.yaml
