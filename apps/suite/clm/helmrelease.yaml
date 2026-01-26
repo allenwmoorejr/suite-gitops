@@ -22,7 +22,7 @@ spec:
     ui:
       image:
         repository: registry.suite.home.arpa:5000/clm
-        tag: "latest"  # {"$imagepolicy": "flux-system:clm:tag"}
+        tag: "20260126-193006"  # {"$imagepolicy": "flux-system:clm:tag"}
         pullPolicy: IfNotPresent
       service:
         port: 80
