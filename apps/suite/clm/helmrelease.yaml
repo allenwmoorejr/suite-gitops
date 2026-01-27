@@ -24,6 +24,8 @@ spec:
         repository: registry.suite.home.arpa:5000/clm
         tag: "20260126-230140" # {"$imagepolicy": "flux-system:clm:tag"}
         pullPolicy: IfNotPresent
+      env:
+        CHANNEL_ID: "UCwFzqkthzt9qqRgsmHWsQ0Q"
       service:
         port: 80
         targetPort: 3000
