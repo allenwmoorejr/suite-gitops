@@ -34,6 +34,11 @@ spec:
               value: {{ $v | quote }}
 {{- end }}
 {{- end }}
+{{- if .Values.ui.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.ui.envFromSecret }}
+{{- end }}
           resources:
             requests:
               memory: "128Mi"

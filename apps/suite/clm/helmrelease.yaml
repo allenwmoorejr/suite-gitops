@@ -26,6 +26,7 @@ spec:
         pullPolicy: IfNotPresent
       env:
         CHANNEL_ID: "UCwFzqkthzt9qqRgsmHWsQ0Q"
+      envFromSecret: clm-twilio
       service:
         port: 80
         targetPort: 3000
