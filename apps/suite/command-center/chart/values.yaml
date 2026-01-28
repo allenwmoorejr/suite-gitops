@@ -1,7 +1,7 @@
 api:
   image:
     repository: registry.suite.home.arpa:5000/suite-command-center-api
-    tag: 20260128-174243
+    tag: 20260128-175123
     pullPolicy: IfNotPresent
   service:
     port: 80
