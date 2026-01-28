@@ -25,7 +25,7 @@ spec:
     api:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-api
-        tag: 20260128-174243 # {"$imagepolicy": "flux-system:command-center-api:tag"}
+        tag: 20260128-175123 # {"$imagepolicy": "flux-system:command-center-api:tag"}
         pullPolicy: Always
       service:
         port: 80
