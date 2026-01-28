@@ -22,7 +22,7 @@ spec:
     ui:
       image:
         repository: registry.suite.home.arpa:5000/clm
-        tag: "20260128-020802" # {"$imagepolicy": "flux-system:clm:tag"}
+        tag: "20260128-153557" # {"$imagepolicy": "flux-system:clm:tag"}
         pullPolicy: IfNotPresent
       env:
         CHANNEL_ID: "UCwFzqkthzt9qqRgsmHWsQ0Q"
