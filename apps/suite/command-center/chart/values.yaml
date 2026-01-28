@@ -31,7 +31,7 @@ sensorPublisher:
   enabled: true
   image:
     repository: registry.suite.home.arpa:5000/sensor-publisher
-    tag: "20260128-174119"
+    tag: "20260128-175903"
     pullPolicy: IfNotPresent
   mqtt:
     host: "mosquitto.carpi.svc.cluster.local"
