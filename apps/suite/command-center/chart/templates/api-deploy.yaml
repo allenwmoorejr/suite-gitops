@@ -23,3 +23,10 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.api.service.targetPort | default 8000 }}
+          env:
+            - name: MQTT_ENABLED
+              value: {{ .Values.api.mqtt.enabled | quote }}
+            - name: MQTT_BROKER_URL
+              value: {{ .Values.api.mqtt.brokerUrl | quote }}
+            - name: MQTT_TOPIC_PREFIX
+              value: {{ .Values.api.mqtt.topicPrefix | quote }}

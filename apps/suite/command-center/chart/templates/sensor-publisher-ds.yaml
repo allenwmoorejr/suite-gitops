@@ -1,0 +1,56 @@
+{{- if .Values.sensorPublisher.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sensor-publisher
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: sensor-publisher
+spec:
+  selector:
+    matchLabels:
+      app: sensor-publisher
+  template:
+    metadata:
+      labels:
+        app: sensor-publisher
+    spec:
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: sensor-publisher
+          image: "{{ .Values.sensorPublisher.image.repository }}:{{ .Values.sensorPublisher.image.tag }}"
+          imagePullPolicy: {{ .Values.sensorPublisher.image.pullPolicy }}
+          env:
+            - name: MQTT_HOST
+              value: {{ .Values.sensorPublisher.mqtt.host | quote }}
+            - name: MQTT_PORT
+              value: {{ .Values.sensorPublisher.mqtt.port | quote }}
+            - name: PUBLISH_INTERVAL
+              value: {{ .Values.sensorPublisher.publishInterval | quote }}
+            - name: I2C_BUS
+              value: {{ .Values.sensorPublisher.i2cBus | quote }}
+            - name: DHT_PIN
+              value: {{ .Values.sensorPublisher.dhtPin | quote }}
+            - name: ENABLE_SYSTEM
+              value: {{ .Values.sensorPublisher.enableSystem | quote }}
+            - name: ENABLE_BME280
+              value: {{ .Values.sensorPublisher.enableBme280 | quote }}
+            - name: ENABLE_DHT22
+              value: {{ .Values.sensorPublisher.enableDht22 | quote }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: host-sys
+              mountPath: /host-sys
+              readOnly: true
+            - name: dev
+              mountPath: /dev
+      volumes:
+        - name: host-sys
+          hostPath:
+            path: /sys
+        - name: dev
+          hostPath:
+            path: /dev
+{{- end }}

@@ -1,11 +1,15 @@
 api:
   image:
     repository: registry.suite.home.arpa:5000/suite-command-center-api
-    tag: 20260114-1050
+    tag: 20260128-174243
     pullPolicy: IfNotPresent
   service:
     port: 80
     targetPort: 8000
+  mqtt:
+    enabled: "true"
+    brokerUrl: "mqtt://mosquitto.carpi.svc.cluster.local:1883"
+    topicPrefix: "suite/sensors/#"
 
 ui:
   image:
@@ -22,3 +26,19 @@ serviceAccount:
 
 rbac:
   create: true
+
+sensorPublisher:
+  enabled: true
+  image:
+    repository: registry.suite.home.arpa:5000/sensor-publisher
+    tag: "20260128-174119"
+    pullPolicy: IfNotPresent
+  mqtt:
+    host: "mosquitto.carpi.svc.cluster.local"
+    port: "1883"
+  publishInterval: "10"
+  i2cBus: "1"
+  dhtPin: "4"
+  enableSystem: "true"
+  enableBme280: "true"
+  enableDht22: "true"
