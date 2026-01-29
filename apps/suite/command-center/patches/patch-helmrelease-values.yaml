@@ -33,7 +33,7 @@ spec:
     ui:
       image:
         repository: registry.suite.home.arpa:5000/suite-command-center-ui
-        tag: neon-20260120-2031 # {"$imagepolicy": "flux-system:command-center-ui:tag"}
+        tag: neon-20260129-005418 # {"$imagepolicy": "flux-system:command-center-ui:tag"}
       service:
         port: 80
         targetPort: 3000
